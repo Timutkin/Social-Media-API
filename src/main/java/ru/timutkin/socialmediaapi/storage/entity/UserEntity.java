@@ -1,9 +1,7 @@
 package ru.timutkin.socialmediaapi.storage.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import ru.timutkin.socialmediaapi.storage.enumeration.Role;
 
 import java.util.ArrayList;
@@ -13,6 +11,8 @@ import java.util.Set;
 
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "user",
         schema = "public",
@@ -38,9 +38,12 @@ public class UserEntity extends BaseEntity {
     @Column(nullable = false)
     private String password;
 
+    @OneToMany(mappedBy = "author")
+    private List<PostEntity> posts = new ArrayList<>();
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_roles",
-            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
     private List<RoleEntity> roles = new ArrayList<>();
 }
