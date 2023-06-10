@@ -13,7 +13,7 @@ import ru.timutkin.socialmediaapi.api.dto.LoginRequest;
 import ru.timutkin.socialmediaapi.api.dto.SignupRequest;
 import ru.timutkin.socialmediaapi.api.service.AuthService;
 import ru.timutkin.socialmediaapi.api.service.RegistrationService;
-import ru.timutkin.socialmediaapi.api.validation.RegistarationValidation;
+import ru.timutkin.socialmediaapi.api.validation.RegistrationValidation;
 
 @AllArgsConstructor
 @RestController
@@ -29,7 +29,7 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<String> registerUser(@RequestBody SignupRequest signupRequest){
-        RegistarationValidation.validate(signupRequest);
+        RegistrationValidation.validate(signupRequest);
         registrationService.register(signupRequest);
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
