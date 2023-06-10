@@ -1,3 +1,30 @@
 spring:
   liquibase:
-    enabled: false
+    url: jdbc:postgresql://localhost:5432/social
+    user: postgres
+    password: postgres
+    change-log: classpath:/db/changelog/db.changelog-master.xml
+    clear-checksums: true
+  datasource:
+    url: jdbc:postgresql://localhost:5432/social
+    username: postgres
+    password: postgres
+  jpa:
+    show-sql: true
+
+
+
+server:
+  port: 2023
+
+
+social:
+  media:
+    jwt:
+      secret:
+        =======================SocialMediaApi===========================
+      expirationMs:
+        3600000
+      cookieName:
+        jwt
+

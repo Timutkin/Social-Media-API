@@ -18,6 +18,7 @@ import ru.timutkin.socialmediaapi.storage.repository.UserRepository;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @AllArgsConstructor
 @Service
@@ -38,11 +39,13 @@ public class PostServiceImpl implements PostService {
                 .text(text)
                 .images(new ArrayList<>())
                 .build();
-        for (MultipartFile file : multipartFiles) {
-            post.addImageEntity( ImageEntity.builder()
-                    .name(file.getName())
-                    .image(file.getBytes())
-                    .build());
+        if (multipartFiles != null) {
+            for (MultipartFile file : multipartFiles) {
+                post.addImageEntity(ImageEntity.builder()
+                        .name(file.getOriginalFilename())
+                        .image(file.getBytes())
+                        .build());
+            }
         }
         return postMapper.postEntityToPostDto(postRepository.save(post));
     }
@@ -59,7 +62,7 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional
     public void deleteById(Long postId, Long userId) {
-        if (!postRepository.existsByAuthorIdAndId(userId, postId)){
+        if (!postRepository.existsByAuthorIdAndId(userId, postId)) {
             throw new PostNotFoundException("Post with id = " + postId + " not found");
         }
         postRepository.deleteById(postId);
@@ -68,14 +71,15 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional
     public PostDto updatePost(Long postId, String header, String text, Long userId) {
-        if (!postRepository.existsByAuthorIdAndId(userId, postId)){
+        PostEntity post = postRepository.findById(postId).orElseThrow(
+                () -> new PostNotFoundException("Post with id = " + postId + " not found")
+        );
+        if (!Objects.equals(post.getAuthor().getId(), userId)) {
             throw new PostNotFoundException("Post with id = " + postId + " not found");
         }
-        PostEntity post = postRepository.findById(postId).get();
         post.setText(text != null ? text : post.getText());
-        post.setHeader(header != null ? header: post.getHeader());
-        postRepository.save(post);
-        return postMapper.postEntityToPostDto(post);
+        post.setHeader(header != null ? header : post.getHeader());
+        return postMapper.postEntityToPostDto(postRepository.saveAndFlush(post));
     }
 
 }

@@ -5,7 +5,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.timutkin.socialmediaapi.api.dto.PostDto;
@@ -19,9 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 @RestController
 @RequestMapping(
-        value = "/api/posts",
-        produces = MediaType.APPLICATION_JSON_VALUE,
-        consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE}
+        value = "/api/posts"
 )
 public class PostController {
 
@@ -30,7 +27,7 @@ public class PostController {
     @PostMapping()
     public ResponseEntity<PostDto> createPost(@RequestParam(name = "header") String header,
                                               @RequestParam(name = "text") String text,
-                                              @RequestParam(name = "images") MultipartFile[] multipartFiles,
+                                              @RequestParam(name = "images", required = false) MultipartFile[] multipartFiles,
                                               Authentication principal
     ) throws IOException {
         PostValidation.validatePostCreation(header, text, multipartFiles);

@@ -14,18 +14,26 @@ import java.util.List;
 @Table(name = "post", schema = "public")
 @Entity
 @NamedEntityGraph(name = "post-with-images", attributeNodes = {
+        @NamedAttributeNode(value = "author", subgraph = "author-subgraph"),
         @NamedAttributeNode(value = "images", subgraph = "image-id-subgraph"),
-        @NamedAttributeNode("author"),
+        @NamedAttributeNode("id"),
         @NamedAttributeNode("header"),
         @NamedAttributeNode("text")
 },
         subgraphs = {
                 @NamedSubgraph(
+                        name = "author-subgraph",
+                        attributeNodes = {
+                                @NamedAttributeNode("id"),
+                                @NamedAttributeNode("username")
+                        }
+                ),
+                @NamedSubgraph(
                         name = "image-id-subgraph",
                         attributeNodes = {
-                                @NamedAttributeNode("id")
+                                @NamedAttributeNode("id"),
                         }
-                )
+                ),
         }
 )
 public class PostEntity extends BaseEntity {
@@ -38,17 +46,16 @@ public class PostEntity extends BaseEntity {
     private String header;
 
     private String text;
-
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private UserEntity author;
 
-    @OneToMany(mappedBy = "post", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, fetch = FetchType.LAZY )
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY )
     private List<ImageEntity> images = new ArrayList<>();
 
     public void addImageEntity(ImageEntity image) {
         images.add(image);
-        if (image.getPost() == null) {
+        if (image.getPost() != this){
             image.setPost(this);
         }
     }

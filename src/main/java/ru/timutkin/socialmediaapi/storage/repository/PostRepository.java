@@ -1,16 +1,33 @@
 package ru.timutkin.socialmediaapi.storage.repository;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 import ru.timutkin.socialmediaapi.storage.entity.PostEntity;
 
 import java.util.List;
 import java.util.Optional;
 
+@Repository
 public interface PostRepository extends JpaRepository<PostEntity, Long> {
-    @EntityGraph(value = "post-with-images", type = EntityGraph.EntityGraphType.FETCH)
+
+    @Query(value = "SELECT p FROM PostEntity p JOIN p.author left JOIN p.images order by p.created DESC ")
     List<PostEntity> findAll();
-    @EntityGraph(value = "post-with-images", type = EntityGraph.EntityGraphType.FETCH)
+
+    @EntityGraph(value = "post-with-images")
     Optional<PostEntity> findById(Long id);
+
+
+
     boolean existsByAuthorIdAndId(Long authorId, Long postId);
+
+    @Query("SELECT p " +
+           "FROM PostEntity p JOIN p.author left JOIN p.images " +
+           "JOIN SubscribeEntity s ON s.subscriberToId = p.author.id WHERE  s.subscriberId = :userId")
+    List<PostEntity> findBySubscribe(@Param("userId") Long userId, Pageable pageable);
+
+
 }

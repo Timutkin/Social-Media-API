@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -13,8 +14,9 @@ import java.util.List;
 @Builder
 public class PostDto{
     private Long id;
+    private Date created;
     private String header;
     private String text;
-    private Long authorId;
-    private List<Long> imagesId;
+    private String authorUsername;
+    private List<String> images;
 }
