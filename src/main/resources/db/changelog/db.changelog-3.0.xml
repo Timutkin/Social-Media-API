@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd"
+        objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+    <changeSet id="1686396026737-1" author="Wild (generated)">
+        <createSequence incrementBy="50" sequenceName="message_request_entity_seq" startValue="1"/>
+    </changeSet>
+    <changeSet id="1686396026737-2" author="Wild (generated)">
+        <createSequence incrementBy="50" sequenceName="subscribe_entity_seq" startValue="1"/>
+    </changeSet>
+    <changeSet id="1686396026737-3" author="Wild (generated)">
+        <createSequence incrementBy="50" schemaName="public" sequenceName="friend_request_seq" startValue="1"/>
+    </changeSet>
+    <changeSet id="1686396026737-4" author="Wild (generated)">
+        <createSequence incrementBy="50" schemaName="public" sequenceName="friendship_seq" startValue="1"/>
+    </changeSet>
+    <changeSet id="1686396026737-5" author="Wild (generated)">
+        <createSequence incrementBy="50" schemaName="public" sequenceName="image_seq" startValue="1"/>
+    </changeSet>
+    <changeSet id="1686396026737-6" author="Wild (generated)">
+        <createSequence incrementBy="50" schemaName="public" sequenceName="post_seq" startValue="1"/>
+    </changeSet>
+    <changeSet id="1686396026737-7" author="Wild (generated)">
+        <createSequence incrementBy="50" schemaName="public" sequenceName="role_seq" startValue="1"/>
+    </changeSet>
+    <changeSet id="1686396026737-8" author="Wild (generated)">
+        <createSequence incrementBy="50" schemaName="public" sequenceName="user_seq" startValue="1"/>
+    </changeSet>
+    <changeSet id="1686396026737-9" author="Wild (generated)">
+        <createTable tableName="message_request">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_message_request"/>
+            </column>
+            <column name="created" type="DATETIME"/>
+            <column name="updated" type="DATETIME"/>
+            <column name="sender_id" type="BIGINT"/>
+            <column name="receiver_id" type="BIGINT"/>
+            <column name="message_request_status" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1686396026737-10" author="Wild (generated)">
+        <createTable tableName="subscribe">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_subscribe"/>
+            </column>
+            <column name="created" type="DATETIME"/>
+            <column name="updated" type="DATETIME"/>
+            <column name="subscriber_id" type="BIGINT"/>
+            <column name="subscribed_to_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1686396026737-11" author="Wild (generated)">
+        <createTable schemaName="public" tableName="friend_request">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_friend_request"/>
+            </column>
+            <column name="created" type="DATETIME"/>
+            <column name="updated" type="DATETIME"/>
+            <column name="sender_id" type="BIGINT"/>
+            <column name="receiver_id" type="BIGINT"/>
+            <column name="friend_request_status" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1686396026737-12" author="Wild (generated)">
+        <createTable schemaName="public" tableName="friendship">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_friendship"/>
+            </column>
+            <column name="created" type="DATETIME"/>
+            <column name="updated" type="DATETIME"/>
+            <column name="friend_one" type="BIGINT"/>
+            <column name="friend_two" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1686396026737-13" author="Wild (generated)">
+        <createTable schemaName="public" tableName="image">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_image"/>
+            </column>
+            <column name="created" type="DATETIME"/>
+            <column name="updated" type="DATETIME"/>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="image" type="BLOB"/>
+            <column name="post_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1686396026737-14" author="Wild (generated)">
+        <createTable schemaName="public" tableName="post">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_post"/>
+            </column>
+            <column name="created" type="DATETIME"/>
+            <column name="updated" type="DATETIME"/>
+            <column name="header" type="VARCHAR(255)"/>
+            <column name="text" type="VARCHAR(255)"/>
+            <column name="user_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1686396026737-15" author="Wild (generated)">
+        <createTable schemaName="public" tableName="role">
+            <column name="id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_role"/>
+            </column>
+            <column name="created" type="DATETIME"/>
+            <column name="updated" type="DATETIME"/>
+            <column name="role" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1686396026737-16" author="Wild (generated)">
+        <createTable schemaName="public" tableName="user">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_user"/>
+            </column>
+            <column name="created" type="DATETIME"/>
+            <column name="updated" type="DATETIME"/>
+            <column name="username" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="password" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1686396026737-17" author="Wild (generated)">
+        <createTable schemaName="public" tableName="user_roles">
+            <column name="role_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1686396026737-18" author="Wild (generated)">
+        <addUniqueConstraint columnNames="receiver_id" constraintName="uc_558052fc7df753a195b98323d" schemaName="public"
+                             tableName="friend_request"/>
+    </changeSet>
+    <changeSet id="1686396026737-19" author="Wild (generated)">
+        <addUniqueConstraint columnNames="sender_id" constraintName="uc_688c240027676ba62eeaa121e" schemaName="public"
+                             tableName="friend_request"/>
+    </changeSet>
+    <changeSet id="1686396026737-20" author="Wild (generated)">
+        <addUniqueConstraint columnNames="username" constraintName="uc_a207721d4377033c99a4161e6" schemaName="public"
+                             tableName="user"/>
+    </changeSet>
+    <changeSet id="1686396026737-21" author="Wild (generated)">
+        <addUniqueConstraint columnNames="email" constraintName="uc_c98819d926c5f99f2d57497f0" schemaName="public"
+                             tableName="user"/>
+    </changeSet>
+    <changeSet id="1686396026737-22" author="Wild (generated)">
+        <addForeignKeyConstraint baseColumnNames="receiver_id" baseTableName="message_request"
+                                 constraintName="FK_MESSAGE_REQUEST_ON_RECEIVER" referencedColumnNames="id"
+                                 referencedTableName="user" referencedTableSchemaName="public"/>
+    </changeSet>
+    <changeSet id="1686396026737-23" author="Wild (generated)">
+        <addForeignKeyConstraint baseColumnNames="sender_id" baseTableName="message_request"
+                                 constraintName="FK_MESSAGE_REQUEST_ON_SENDER" referencedColumnNames="id"
+                                 referencedTableName="user" referencedTableSchemaName="public"/>
+    </changeSet>
+    <changeSet id="1686396026737-24" author="Wild (generated)">
+        <addForeignKeyConstraint baseColumnNames="subscribed_to_id" baseTableName="subscribe"
+                                 constraintName="FK_SUBSCRIBE_ON_SUBSCRIBED_TO" referencedColumnNames="id"
+                                 referencedTableName="user" referencedTableSchemaName="public"/>
+    </changeSet>
+    <changeSet id="1686396026737-25" author="Wild (generated)">
+        <addForeignKeyConstraint baseColumnNames="subscriber_id" baseTableName="subscribe"
+                                 constraintName="FK_SUBSCRIBE_ON_SUBSCRIBER" referencedColumnNames="id"
+                                 referencedTableName="user" referencedTableSchemaName="public"/>
+    </changeSet>
+    <changeSet id="1686396026737-26" author="Wild (generated)">
+        <addForeignKeyConstraint baseColumnNames="friend_one" baseTableName="friendship" baseTableSchemaName="public"
+                                 constraintName="FK_FRIENDSHIP_ON_FRIEND_ONE" referencedColumnNames="id"
+                                 referencedTableName="user" referencedTableSchemaName="public"/>
+    </changeSet>
+    <changeSet id="1686396026737-27" author="Wild (generated)">
+        <addForeignKeyConstraint baseColumnNames="friend_two" baseTableName="friendship" baseTableSchemaName="public"
+                                 constraintName="FK_FRIENDSHIP_ON_FRIEND_TWO" referencedColumnNames="id"
+                                 referencedTableName="user" referencedTableSchemaName="public"/>
+    </changeSet>
+    <changeSet id="1686396026737-28" author="Wild (generated)">
+        <addForeignKeyConstraint baseColumnNames="receiver_id" baseTableName="friend_request"
+                                 baseTableSchemaName="public" constraintName="FK_FRIEND_REQUEST_ON_RECEIVER"
+                                 referencedColumnNames="id" referencedTableName="user"
+                                 referencedTableSchemaName="public"/>
+    </changeSet>
+    <changeSet id="1686396026737-29" author="Wild (generated)">
+        <addForeignKeyConstraint baseColumnNames="sender_id" baseTableName="friend_request" baseTableSchemaName="public"
+                                 constraintName="FK_FRIEND_REQUEST_ON_SENDER" referencedColumnNames="id"
+                                 referencedTableName="user" referencedTableSchemaName="public"/>
+    </changeSet>
+    <changeSet id="1686396026737-30" author="Wild (generated)">
+        <addForeignKeyConstraint baseColumnNames="post_id" baseTableName="image" baseTableSchemaName="public"
+                                 constraintName="FK_IMAGE_ON_POST" referencedColumnNames="id" referencedTableName="post"
+                                 referencedTableSchemaName="public"/>
+    </changeSet>
+    <changeSet id="1686396026737-31" author="Wild (generated)">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="post" baseTableSchemaName="public"
+                                 constraintName="FK_POST_ON_USER" referencedColumnNames="id" referencedTableName="user"
+                                 referencedTableSchemaName="public"/>
+    </changeSet>
+    <changeSet id="1686396026737-32" author="Wild (generated)">
+        <addForeignKeyConstraint baseColumnNames="role_id" baseTableName="user_roles" baseTableSchemaName="public"
+                                 constraintName="fk_userol_on_role_entity" referencedColumnNames="id"
+                                 referencedTableName="role" referencedTableSchemaName="public"/>
+    </changeSet>
+    <changeSet id="1686396026737-33" author="Wild (generated)">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="user_roles" baseTableSchemaName="public"
+                                 constraintName="fk_userol_on_user_entity" referencedColumnNames="id"
+                                 referencedTableName="user" referencedTableSchemaName="public"/>
+    </changeSet>
+
+
+
+    <changeSet  author="Wild (generated)"  id="insert-role-user">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM public.role r WHERE r.role='ROLE_USER';
+            </sqlCheck>
+        </preConditions>
+        <insert
+                schemaName="public"
+                tableName="role">
+            <column  name="role"  value="ROLE_USER"/>
+            <column name="id" valueSequenceNext="role_seq"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>
