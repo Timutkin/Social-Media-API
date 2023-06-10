@@ -24,9 +24,10 @@ public interface PostRepository extends JpaRepository<PostEntity, Long> {
 
     boolean existsByAuthorIdAndId(Long authorId, Long postId);
 
-    @Query("SELECT p " +
-           "FROM PostEntity p JOIN p.author left JOIN p.images " +
-           "JOIN SubscribeEntity s ON s.subscriberToId = p.author.id WHERE  s.subscriberId = :userId")
+    @Query(value = """
+           SELECT p
+           FROM PostEntity p JOIN p.author left JOIN p.images
+           JOIN SubscribeEntity s ON s.subscriberToId = p.author.id WHERE  s.subscriberId = :userId""")
     List<PostEntity> findBySubscribe(@Param("userId") Long userId, Pageable pageable);
 
 

@@ -68,7 +68,7 @@ public class FriendshipController {
                 .body("The user has been successfully rejected to friends");
     }
 
-    @GetMapping
+    @GetMapping("/requests")
     public ResponseEntity<List<FriendRequestDto>> getAllFriendRequests(Authentication principal) {
         UserDetailsImpl userDetails = (UserDetailsImpl) principal.getPrincipal();
         List<FriendRequestDto> friendRequestDtoList = friendshipService.getAllFriendRequests(userDetails.getId());
@@ -77,4 +77,12 @@ public class FriendshipController {
                 .body(friendRequestDtoList);
     }
 
+    @GetMapping
+    public ResponseEntity<List<Long>> getAllFriendsId(Authentication principal) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) principal.getPrincipal();
+        List<Long> friendRequestDtoList = friendshipService.getAllFriends(userDetails.getId());
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(friendRequestDtoList);
+    }
 }

@@ -14,4 +14,6 @@ public interface FriendshipService {
     void receiveFriendRequest(Long fromUserId, Long toUserid);
 
     void rejectFriendRequest(Long fromUserId, Long id);
+
+    List<Long> getAllFriends(Long id);
 }

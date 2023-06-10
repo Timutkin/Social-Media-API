@@ -131,4 +131,9 @@ public class FriendshipServiceImpl implements FriendshipService {
 
     }
 
+    @Override
+    public List<Long> getAllFriends(Long id) {
+        return friendshipRepository.getFriendsListByUserId(id);
+    }
+
 }

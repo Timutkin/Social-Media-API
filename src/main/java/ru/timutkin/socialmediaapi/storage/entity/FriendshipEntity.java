@@ -8,12 +8,12 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "frienddship", schema = "public")
+@Table(name = "friendship", schema = "public")
 @Entity
 public class FriendshipEntity extends BaseEntity{
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "frienddship_gen")
-    @SequenceGenerator(name = "frienddship_gen", sequenceName = "frienddship_seq")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "friendship_gen")
+    @SequenceGenerator(name = "friendship_gen", sequenceName = "friendship_seq")
     @Column(name = "id", nullable = false)
     private Long id;
 
