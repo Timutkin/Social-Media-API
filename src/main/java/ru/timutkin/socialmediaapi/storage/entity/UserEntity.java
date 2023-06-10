@@ -2,12 +2,9 @@ package ru.timutkin.socialmediaapi.storage.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import ru.timutkin.socialmediaapi.storage.enumeration.Role;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -38,7 +35,7 @@ public class UserEntity extends BaseEntity {
     @Column(nullable = false)
     private String password;
 
-    @OneToMany(mappedBy = "author")
+    @OneToMany(mappedBy = "author", fetch = FetchType.LAZY)
     private List<PostEntity> posts = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY)

@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import ru.timutkin.socialmediaapi.api.exception.AuthUserNotFoundException;
 import ru.timutkin.socialmediaapi.storage.repository.UserRepository;
 
 @AllArgsConstructor
@@ -21,7 +22,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         return UserDetailsImpl.build(
                 userRepository.findByUsername(username)
                         .orElseThrow(
-                                () -> new UsernameNotFoundException("User Not Found with username: " + username)
+                                () -> new AuthUserNotFoundException("User Not Found with username: " + username)
                         ));
     }
 }

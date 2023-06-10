@@ -5,12 +5,15 @@ import ru.timutkin.socialmediaapi.api.exception.InvalidRegistrationDataException
 
 import java.util.regex.Pattern;
 
-public class RegistarationValidation{
+public class RegistrationValidation {
+
+    private RegistrationValidation() {
+    }
 
     private static final String EMAIL_REGEX = "^[a-zA-Z0-9_+&*-]+(?:\\." +
-                                             "[a-zA-Z0-9_+&*-]+)*@" +
-                                             "(?:[a-zA-Z0-9-]+\\.)+[a-z" +
-                                             "A-Z]{2,7}$";
+                                              "[a-zA-Z0-9_+&*-]+)*@" +
+                                              "(?:[a-zA-Z0-9-]+\\.)+[a-z" +
+                                              "A-Z]{2,7}$";
 
     public static void validate(SignupRequest request){
         if (request.getUsername() == null || request.getUsername().isBlank() || request.getUsername().length() <= 3 ||  request.getUsername().length() >= 21){
@@ -19,8 +22,8 @@ public class RegistarationValidation{
         if (request.getEmail() == null || !isValidEmail(request.getEmail()) || request.getEmail().length() > 50){
             throw new InvalidRegistrationDataException("Incorrect email format");
         }
-        if (request.getPassword() == null || request.getPassword().length() <= 5){
-            throw new InvalidRegistrationDataException("The password length must not be less than 6 characters");
+        if (request.getPassword() == null || !validatePassword(request.getPassword()) ){
+            throw new InvalidRegistrationDataException("The password is incorrect");
         }
 
     }
@@ -30,6 +33,11 @@ public class RegistarationValidation{
         if (email == null)
             return false;
         return pattern.matcher(email).matches();
+    }
+
+    public static boolean validatePassword(String password) {
+        String regex = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\\S+$).{8,20}$";
+        return password.matches(regex);
     }
 
 }
