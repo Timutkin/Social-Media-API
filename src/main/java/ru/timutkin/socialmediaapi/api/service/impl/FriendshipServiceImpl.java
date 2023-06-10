@@ -32,7 +32,6 @@ public class FriendshipServiceImpl implements FriendshipService {
 
     private final FriendRequestMapper friendRequestMapper;
 
-
     private final FriendshipRepository friendshipRepository;
 
     @Override
@@ -40,6 +39,9 @@ public class FriendshipServiceImpl implements FriendshipService {
     public void sendRequestToFriendShip(Long toId, Long fromId) {
         if (!userRepository.existsById(toId)){
             throw new UserNotFoundException("User with id = " + toId + " not found");
+        }
+        if (toId.equals(fromId)){
+            throw new FriendRequestAlreadyExistsException("You can't send a friend request to yourself");
         }
         if (friendRequestRepository.existsByReceiverIdAndSenderId(toId, fromId)){
             throw new FriendRequestNotFoundException("User friend request to user with id = " + toId + " already exists" );

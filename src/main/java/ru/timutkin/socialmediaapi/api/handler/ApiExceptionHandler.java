@@ -30,7 +30,7 @@ public class ApiExceptionHandler {
                 .body(validationException.getMessage());
     }
 
-    @ExceptionHandler(value = {FriendRequestAlreadyExistsException.class})
+    @ExceptionHandler(value = {FriendRequestAlreadyExistsException.class, MessageRequestAlreadyExistsException.class})
     protected ResponseEntity<String> handleAlreadyExistsException(AlreadyExistsException alreadyExistsException) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .contentType(MediaType.APPLICATION_JSON)

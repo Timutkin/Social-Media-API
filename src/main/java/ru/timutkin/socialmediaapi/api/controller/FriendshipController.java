@@ -16,7 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @RestController
 @RequestMapping(
-        value = "/api/requests"
+        value = "/api/friends"
 )
 public class FriendshipController {
 
