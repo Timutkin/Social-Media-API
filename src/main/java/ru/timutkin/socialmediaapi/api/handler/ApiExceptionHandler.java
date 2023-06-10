@@ -10,17 +10,31 @@ import ru.timutkin.socialmediaapi.api.exception.*;
 @ControllerAdvice
 public class ApiExceptionHandler {
 
-    @ExceptionHandler(value = {InvalidRegistrationDataException.class, InvalidPostDataException.class})
-    protected ResponseEntity<String> handleValidationException(ValidationException validationException){
+    @ExceptionHandler(value = {
+            InvalidRegistrationDataException.class,
+            InvalidPostDataException.class})
+    protected ResponseEntity<String> handleValidationException(ValidationException validationException) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(validationException.getMessage());
     }
 
-    @ExceptionHandler(value = {UserNotFoundException.class, PostNotFoundException.class})
-    protected ResponseEntity<String> handleNotFoundException(NotFoundException validationException){
+    @ExceptionHandler(value = {
+            PostNotFoundException.class,
+            FriendRequestNotFoundException.class,
+            UserNotFoundException.class,
+            ImageNotFoundException.class})
+    protected ResponseEntity<String> handleNotFoundException(NotFoundException validationException) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(validationException.getMessage());
     }
+
+    @ExceptionHandler(value = {FriendRequestAlreadyExistsException.class})
+    protected ResponseEntity<String> handleAlreadyExistsException(AlreadyExistsException alreadyExistsException) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(alreadyExistsException.getMessage());
+    }
+
 }
