@@ -10,7 +10,7 @@ import lombok.*;
 @NoArgsConstructor
 @Table(name = "image", schema = "public")
 @Entity
-public class ImageEntity {
+public class ImageEntity  extends BaseEntity{
 
     @Id
     @SequenceGenerator(name = "image_gen", sequenceName = "image_seq")
@@ -23,7 +23,7 @@ public class ImageEntity {
     @Lob
     private byte[] image;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     private PostEntity post;
 }
