@@ -1,0 +1,16 @@
+spring:
+  liquibase:
+    url: jdbc:postgresql://localhost:5432/social-test
+    user: postgres
+    password: postgres
+    change-log: classpath:/db/changelog/db.changelog-master.xml
+    clear-checksums: true
+  jpa:
+    show-sql: true
+  datasource:
+    url: jdbc:postgresql://localhost:5432/social-test
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+server:
+  port: 2000
