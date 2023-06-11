@@ -16,9 +16,12 @@ public interface FriendRequestRepository extends JpaRepository<FriendRequestEnti
     @Modifying(clearAutomatically = true)
     void deleteByReceiverIdAndSenderId(Long fromId, Long toId);
 
-    boolean existsByReceiverIdAndSenderId(Long fromId, Long toId);
+    boolean existsByReceiverIdAndSenderIdOrSenderIdAndReceiverId(Long fromId, Long toId, Long from2Id, Long to2Id);
 
+    boolean existsByReceiverIdAndSenderId(Long fromId, Long toId);
     List<FriendRequestEntity> findByReceiverId(Long id);
+
+    List<FriendRequestEntity> findBySenderId(Long id);
 
     @Modifying
     @Query(value = "UPDATE FriendRequestEntity fr SET fr.friendRequestStatus = :requestStatus " +

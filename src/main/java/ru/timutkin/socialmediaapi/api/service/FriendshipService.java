@@ -1,6 +1,7 @@
 package ru.timutkin.socialmediaapi.api.service;
 
-import ru.timutkin.socialmediaapi.api.dto.FriendRequestDto;
+import ru.timutkin.socialmediaapi.api.dto.FriendFromRequestDto;
+import ru.timutkin.socialmediaapi.api.dto.FriendToRequestDto;
 
 import java.util.List;
 
@@ -9,11 +10,13 @@ public interface FriendshipService {
 
     void removeRequestToFriendShip(Long toId, Long fromId);
 
-    List<FriendRequestDto> getAllFriendRequests(Long id);
+    List<FriendFromRequestDto> getAllFromFriendRequests(Long id);
 
     void receiveFriendRequest(Long fromUserId, Long toUserid);
 
     void rejectFriendRequest(Long fromUserId, Long id);
 
     List<Long> getAllFriends(Long id);
+
+    List<FriendToRequestDto> getAllToFriendRequests(Long id);
 }

@@ -4,7 +4,7 @@ import lombok.Data;
 import ru.timutkin.socialmediaapi.storage.enumeration.FriendRequestStatus;
 
 @Data
-public class FriendRequestDto {
+public class FriendFromRequestDto {
     Long senderId;
     FriendRequestStatus friendRequestStatus;
 }

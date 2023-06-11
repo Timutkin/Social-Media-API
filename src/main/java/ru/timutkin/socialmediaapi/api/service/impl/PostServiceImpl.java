@@ -82,4 +82,13 @@ public class PostServiceImpl implements PostService {
         return postMapper.postEntityToPostDto(postRepository.saveAndFlush(post));
     }
 
+    @Override
+    @Transactional
+    public List<PostDto> findMyPosts(Long userId) {
+        return postRepository.findAllById(userId)
+                .stream()
+                .map(postMapper::postEntityToPostDto)
+                .toList();
+    }
+
 }

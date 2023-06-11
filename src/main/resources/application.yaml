@@ -12,10 +12,8 @@ spring:
   jpa:
     show-sql: true
 
-
-
 server:
-  port: 2023
+  port: 2000
 
 
 social:
@@ -27,4 +25,11 @@ social:
         3600000
       cookieName:
         jwt
+
+springdoc:
+  swagger-ui:
+    config-url: /v3/api-docs/swagger-config
+    disable-swagger-default-url: true
+    enabled: true
+    url: /v3/api-docs
 

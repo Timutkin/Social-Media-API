@@ -7,7 +7,7 @@ import ru.timutkin.socialmediaapi.storage.entity.PostEntity;
 @Mapper(componentModel = "spring")
 public interface PostMapper {
 
-    String IMAGE_RESOURCE = "http://localhost:2023/api/images/";
+    String IMAGE_RESOURCE = "http://localhost:2000/api/images/";
 
     default PostDto postEntityToPostDto(PostEntity postEntity){
         return PostDto.builder()

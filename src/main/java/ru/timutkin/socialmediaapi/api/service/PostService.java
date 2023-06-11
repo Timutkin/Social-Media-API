@@ -14,4 +14,6 @@ public interface PostService {
     void deleteById(Long postId, Long userId);
 
     PostDto updatePost(Long postId, String header, String text, Long userId);
+
+    List<PostDto> findMyPosts(Long userId);
 }

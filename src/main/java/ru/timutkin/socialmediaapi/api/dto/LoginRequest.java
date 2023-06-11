@@ -1,10 +1,11 @@
 package ru.timutkin.socialmediaapi.api.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Builder;
+import lombok.Data;
 
-@Getter
-@Setter
+
+@Builder
+@Data
 public class LoginRequest {
     private String username;
     private String password;
