@@ -34,7 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 class PostControllerIT {
 
-    private static final String TESTED_URL = ApiConstant.VERSION_API + "/posts";
+    public static final String TESTED_URL = ApiConstant.VERSION_API + "/posts";
 
     @Autowired
     private MockMvc mvc;
