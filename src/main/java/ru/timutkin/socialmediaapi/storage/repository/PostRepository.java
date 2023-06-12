@@ -19,10 +19,11 @@ public interface PostRepository extends JpaRepository<PostEntity, Long> {
     @Query(value = "SELECT p FROM PostEntity p  JOIN FETCH p.author left JOIN FETCH p.images order by p.created DESC ")
     List<PostEntity> findAllFetch();
 
-    @Query(value = "SELECT p FROM PostEntity p JOIN p.author left JOIN p.images WHERE p.author.id = :userId order by p.created DESC ")
-    List<PostEntity> findAllById(@Param("userId") Long userId);
+    @Query(value = "SELECT p FROM PostEntity p JOIN FETCH p.author left JOIN FETCH p.images " +
+                   "WHERE p.author.id = :userId order by p.created DESC ")
+    List<PostEntity> findAllByIdFetch(@Param("userId") Long userId);
 
-    @EntityGraph("post-with-images")
+    @EntityGraph(value = "post-with-images", type = EntityGraph.EntityGraphType.FETCH)
     Optional<PostEntity> findById(Long id);
 
     boolean existsByAuthorIdAndId(Long authorId, Long postId);

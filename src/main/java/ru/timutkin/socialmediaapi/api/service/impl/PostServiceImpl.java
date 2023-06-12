@@ -16,7 +16,7 @@ import ru.timutkin.socialmediaapi.storage.repository.UserRepository;
 
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 
@@ -37,7 +37,7 @@ public class PostServiceImpl implements PostService {
                 .author(userRepository.getById(userId))
                 .header(header)
                 .text(text)
-                .images(new ArrayList<>())
+                .images(new HashSet<>())
                 .build();
         if (multipartFiles != null) {
             for (MultipartFile file : multipartFiles) {
@@ -53,7 +53,7 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional
     public List<PostDto> findAll() {
-        return postRepository.findAll()
+        return postRepository.findAllFetch()
                 .stream()
                 .map(postMapper::postEntityToPostDto)
                 .toList();
@@ -85,7 +85,7 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional
     public List<PostDto> findMyPosts(Long userId) {
-        return postRepository.findAllById(userId)
+        return postRepository.findAllByIdFetch(userId)
                 .stream()
                 .map(postMapper::postEntityToPostDto)
                 .toList();
