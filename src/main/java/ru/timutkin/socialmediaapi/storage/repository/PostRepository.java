@@ -14,10 +14,10 @@ import java.util.Optional;
 
 @Repository
 public interface PostRepository extends JpaRepository<PostEntity, Long> {
-    PostEntity findByAuthor_Id(@NonNull Long id);
+    PostEntity findByAuthorId(@NonNull Long id);
 
-    @Query(value = "SELECT p FROM PostEntity p JOIN p.author left JOIN p.images order by p.created DESC ")
-    List<PostEntity> findAll();
+    @Query(value = "SELECT p FROM PostEntity p  JOIN FETCH p.author left JOIN FETCH p.images order by p.created DESC ")
+    List<PostEntity> findAllFetch();
 
     @Query(value = "SELECT p FROM PostEntity p JOIN p.author left JOIN p.images WHERE p.author.id = :userId order by p.created DESC ")
     List<PostEntity> findAllById(@Param("userId") Long userId);
