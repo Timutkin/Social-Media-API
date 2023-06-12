@@ -37,16 +37,11 @@ public class FriendshipController {
                     @ApiResponse(responseCode = "200",
                             description = "The friend request was successfully sent"
                     ),
-                    @ApiResponse(responseCode = "400",
-                            content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = ErrorResponse.class)),
-                            description = "The user is trying to send an application to himself, " +
-                                          "or the application has already been sent"
-                    ),
                     @ApiResponse(responseCode = "409",
                             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                                     schema = @Schema(implementation = ErrorResponse.class)),
-                            description = "You have already accepted the application as a friend"
+                            description = "The user is trying to send an application to himself,or " +
+                                          "you have already accepted the application as a friend"
                     ),
                     @ApiResponse(responseCode = "401",
                             content = @Content(schema = @Schema(implementation = HttpServletResponse.class)),
@@ -73,14 +68,14 @@ public class FriendshipController {
                     @ApiResponse(responseCode = "400",
                             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                                     schema = @Schema(implementation = ErrorResponse.class)),
-                            description = "The application to the specified user was not found or the user was not found"
+                            description = "The application to the specified user was not found"
                     ),
                     @ApiResponse(responseCode = "401",
                             content = @Content(schema = @Schema(implementation = HttpServletResponse.class)),
                             description = "User unauthorized"
                     )
             })
-    @PostMapping("/remove/{userId}")
+    @DeleteMapping("/remove/{userId}")
     public ResponseEntity<String> removeRequestToFriendship(@PathVariable Long userId,
                                                             Authentication principal
     ) {
@@ -100,8 +95,7 @@ public class FriendshipController {
                     @ApiResponse(responseCode = "400",
                             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                                     schema = @Schema(implementation = ErrorResponse.class)),
-                            description = "The application from the specified user was not found " +
-                                          "or you have already accepted the application as a friend"
+                            description = "The application from the specified user was not found "
                     ),
                     @ApiResponse(responseCode = "409",
                             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
@@ -127,7 +121,7 @@ public class FriendshipController {
     @Operation(summary = "Rejects a friend request to user with userId",
             responses = {
                     @ApiResponse(responseCode = "200",
-                            description = "The friend request was successfully removed"
+                            description = "The friend request was successfully rejected"
                     ),
                     @ApiResponse(responseCode = "400",
                             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
@@ -150,7 +144,7 @@ public class FriendshipController {
                 .body("The user has been successfully rejected to friends");
     }
 
-    @Operation(summary = "Gets all friends requests from another users",
+    @Operation(summary = "Gets all friends requests FROM another users",
             responses = {
                     @ApiResponse(responseCode = "200",
                             description = "The friend requests was successfully received"
@@ -169,7 +163,7 @@ public class FriendshipController {
                 .body(friendFromRequestDtoList);
     }
 
-    @Operation(summary = "Gets all friends requests to another users",
+    @Operation(summary = "Gets all friends requests TO another users",
             responses = {
                     @ApiResponse(responseCode = "200",
                             description = "The friend requests was successfully received"

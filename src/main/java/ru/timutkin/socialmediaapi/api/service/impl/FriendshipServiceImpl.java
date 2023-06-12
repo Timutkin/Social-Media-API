@@ -28,7 +28,6 @@ public class FriendshipServiceImpl implements FriendshipService {
 
     private final SubscribeRepository subscribeRepository;
 
-    private final UserRepository userRepository;
 
     private final FriendRequestMapper friendRequestMapper;
 
@@ -61,7 +60,7 @@ public class FriendshipServiceImpl implements FriendshipService {
     @Override
     @Transactional
     public void removeRequestToFriendShip(Long toId, Long fromId) {
-        if (friendRequestRepository.existsByReceiverIdAndSenderId(toId, fromId)){
+        if (!friendRequestRepository.existsByReceiverIdAndSenderId(toId, fromId)){
             throw new FriendRequestNotFoundException("User request to user with id = " + toId + " not found" );
         }
         friendRequestRepository.deleteByReceiverIdAndSenderId(fromId, toId);
@@ -122,8 +121,8 @@ public class FriendshipServiceImpl implements FriendshipService {
          */
         if (subscribeRepository.existsBySubscriberIdAndSubscriberToId(toUserId, fromUserId)){
             subscribeRepository.deleteBySubscriberIdAndSubscriberToId(toUserId, fromUserId);
+            friendshipRepository.deleteByFriendOneIdAndFriendTwoId(fromUserId, toUserId);
         }
-        friendshipRepository.deleteByFriendOneIdAndFriendTwoId(fromUserId, toUserId);
 
     }
 
