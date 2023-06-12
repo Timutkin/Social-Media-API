@@ -21,6 +21,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(value = {
+            InvalidFileException.class,
             InvalidRegistrationDataException.class,
             InvalidPostDataException.class})
     protected ResponseEntity<ErrorResponse> handleValidationException(ValidationException validationException) {

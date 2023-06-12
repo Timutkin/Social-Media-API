@@ -47,7 +47,7 @@ public class PostServiceImpl implements PostService {
                         .build());
             }
         }
-        return postMapper.postEntityToPostDto(postRepository.save(post));
+        return postMapper.postEntityToPostDto(postRepository.saveAndFlush(post));
     }
 
     @Override
