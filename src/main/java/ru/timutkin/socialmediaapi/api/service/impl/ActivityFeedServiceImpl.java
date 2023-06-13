@@ -11,20 +11,31 @@ import ru.timutkin.socialmediaapi.storage.repository.PostRepository;
 
 import java.util.List;
 
+import static ru.timutkin.socialmediaapi.api.mapper.PostMapper.IMAGE_RESOURCE;
+
 @AllArgsConstructor
 @Service
 public class ActivityFeedServiceImpl implements ActivityFeedService {
 
     private final PostRepository postRepository;
 
-    private final PostMapper postMapper;
 
     @Override
     @Transactional
     public List<PostDto> getFeedActivity(Pageable pageable, Long userId) {
         return postRepository.findBySubscribe(userId, pageable)
                 .stream()
-                .map(postMapper::postEntityToPostDto)
+                .map(postDto -> PostDto.builder()
+                        .id(postDto.getId())
+                        .text(postDto.getText())
+                        .header(postDto.getHeader())
+                        .authorUsername(postDto.getUsername())
+                        .created(postDto.getCreated())
+                        .images(
+                                postDto.getImages().stream()
+                                        .map(img-> IMAGE_RESOURCE + img.getId())
+                                        .toList()
+                        ).build())
                 .toList();
     }
 }
