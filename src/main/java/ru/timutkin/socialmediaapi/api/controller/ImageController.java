@@ -117,7 +117,7 @@ public class ImageController {
                             description = "User unauthorized"
                     )
             })
-    @GetMapping(value = "/{image_id}",
+    @GetMapping(value = "/{imageId}",
             produces = {
                     MediaType.IMAGE_PNG_VALUE,
                     MediaType.IMAGE_JPEG_VALUE

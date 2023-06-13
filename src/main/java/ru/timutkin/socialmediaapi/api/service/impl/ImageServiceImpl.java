@@ -11,6 +11,7 @@ import ru.timutkin.socialmediaapi.storage.entity.ImageEntity;
 import ru.timutkin.socialmediaapi.storage.entity.PostEntity;
 import ru.timutkin.socialmediaapi.storage.repository.ImageRepository;
 import ru.timutkin.socialmediaapi.storage.repository.PostRepository;
+import ru.timutkin.socialmediaapi.storage.repository.projection.ImageOnlyBytes;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -61,8 +62,9 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
+    @Transactional
     public byte[] getImageById(Long imageId) {
-        ImageEntity image = imageRepository.findById(imageId).orElseThrow(
+        ImageOnlyBytes image = imageRepository.getByImageId(imageId).orElseThrow(
                 () ->  new ImageNotFoundException("Image not found exception")
         );
         return image.getImage();
