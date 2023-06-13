@@ -37,7 +37,10 @@ public class AuthController {
     private final AuthService authService;
 
 
-    @Operation(summary = "Registers the user",
+    @Operation(summary = "Registers the user", description = "The username, as well as the password, must be unique." +
+                                                             " The password must contain at least one uppercase and lowercase letter, " +
+                                                             "one digit and a special character (!@#$%^&*()). " +
+                                                             "It should also be between 8 and 20 characters long.",
             responses = {
                     @ApiResponse(responseCode = "201",
                             description = "The user was successfully registered "

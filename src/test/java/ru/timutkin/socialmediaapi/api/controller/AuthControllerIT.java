@@ -12,6 +12,7 @@ import ru.timutkin.socialmediaapi.api.constant.ApiConstant;
 import ru.timutkin.socialmediaapi.storage.repository.UserRepository;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -46,8 +47,12 @@ class AuthControllerIT {
                         }
                         """
                 )
-                .accept(MediaType.APPLICATION_JSON)
-        ).andExpect(status().isCreated());
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpectAll(
+                        status().isCreated(),
+                        jsonPath("$.username").value("testuser"),
+                        jsonPath("$.email").value("test@mail.ru")
+                );
     }
     @Test
     void registerUser_UsernameIsNonValid_ShouldReturn400() throws Exception {

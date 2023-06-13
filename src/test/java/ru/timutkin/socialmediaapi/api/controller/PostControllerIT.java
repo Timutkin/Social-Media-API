@@ -55,6 +55,8 @@ class PostControllerIT {
     private JsonConverter jsonConverter;
 
     private String jwtCookie;
+
+    private Long authUserId;
     @Autowired
     private ImageRepository imageRepository;
 
@@ -72,6 +74,7 @@ class PostControllerIT {
                                 """
                 )
                 .accept(MediaType.APPLICATION_JSON)).andReturn().getResponse().getCookie("jwt")).getValue();
+        authUserId = userRepository.findByUsername(jwtUtils.getUserNameFromJwtToken(jwtCookie)).get().getId();
     }
 
     @AfterEach
@@ -185,8 +188,7 @@ class PostControllerIT {
                 .cookie(new Cookie("jwt", jwtCookie))
                 .accept(MediaType.APPLICATION_JSON)
         );
-        Long authUserId = userRepository.findByUsername(jwtUtils.getUserNameFromJwtToken(jwtCookie)).get().getId();
-        List<PostDto> postDtos = postRepository.findAllById(authUserId).stream().map(postMapper::postEntityToPostDto).toList();
+        List<PostDto> postDtos = postRepository.findAllByIdFetch(authUserId).stream().map(postMapper::postEntityToPostDto).toList();
         mvc.perform(get(TESTED_URL + "/my")
                         .cookie(new Cookie("jwt", jwtCookie))
                 )
@@ -214,8 +216,7 @@ class PostControllerIT {
                 .cookie(new Cookie("jwt", jwtCookie))
                 .accept(MediaType.APPLICATION_JSON)
         );
-        Long authUserId = userRepository.findByUsername(jwtUtils.getUserNameFromJwtToken(jwtCookie)).get().getId();
-        Long postId = postRepository.findByAuthor_Id(authUserId).getId();
+        Long postId = postRepository.findByAuthorId(authUserId).getId();
         mvc.perform(delete(TESTED_URL + "/" + postId)
                         .cookie(new Cookie("jwt", jwtCookie))
                 )
@@ -252,8 +253,7 @@ class PostControllerIT {
                 .cookie(new Cookie("jwt", jwtCookie))
                 .accept(MediaType.APPLICATION_JSON)
         );
-        Long authUserId = userRepository.findByUsername(jwtUtils.getUserNameFromJwtToken(jwtCookie)).get().getId();
-        PostEntity post = postRepository.findByAuthor_Id(authUserId);
+        PostEntity post = postRepository.findByAuthorId(authUserId);
         PostDto updatedPostDto = postMapper.postEntityToPostDto(post);
         updatedPostDto.setText("new text");
         updatedPostDto.setHeader("new header");
@@ -278,8 +278,7 @@ class PostControllerIT {
                 .cookie(new Cookie("jwt", jwtCookie))
                 .accept(MediaType.APPLICATION_JSON)
         );
-        Long authUserId = userRepository.findByUsername(jwtUtils.getUserNameFromJwtToken(jwtCookie)).get().getId();
-        Long  postId = postRepository.findByAuthor_Id(authUserId).getId();
+        Long  postId = postRepository.findByAuthorId(authUserId).getId();
         mvc.perform(patch(TESTED_URL)
                 .param("header", "  ")
                 .param("post_id", String.valueOf(postId))
@@ -298,8 +297,7 @@ class PostControllerIT {
                 .cookie(new Cookie("jwt", jwtCookie))
                 .accept(MediaType.APPLICATION_JSON)
         );
-        Long authUserId = userRepository.findByUsername(jwtUtils.getUserNameFromJwtToken(jwtCookie)).get().getId();
-        Long  postId = postRepository.findByAuthor_Id(authUserId).getId();
+        Long  postId = postRepository.findByAuthorId(authUserId).getId();
         mvc.perform(patch(TESTED_URL)
                 .param("text", "  ")
                 .param("post_id", String.valueOf(postId))

@@ -16,7 +16,7 @@ import ru.timutkin.socialmediaapi.storage.enumeration.Role;
 import ru.timutkin.socialmediaapi.storage.repository.RoleRepository;
 import ru.timutkin.socialmediaapi.storage.repository.UserRepository;
 
-import java.util.List;
+import java.util.Set;
 
 
 @Service
@@ -53,7 +53,7 @@ public class RegistrationServiceImpl implements RegistrationService {
                 .username(request.getUsername())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .roles(List.of(roleUser))
+                .roles(Set.of(roleUser))
                 .build();
         return userMapper.userEntityToUserDto(userRepository.save(user));
     }

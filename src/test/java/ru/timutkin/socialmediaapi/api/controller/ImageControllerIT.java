@@ -81,7 +81,7 @@ class ImageControllerIT {
                 .cookie(new Cookie("jwt", jwtCookie))
                 .accept(MediaType.APPLICATION_JSON)
         );
-        Long postId = postRepository.findByAuthor_Id(authUserId).getId();
+        Long postId = postRepository.findByAuthorId(authUserId).getId();
         MockMultipartFile file = new MockMultipartFile("image",
                 "original.jpg", MediaType.IMAGE_JPEG_VALUE, "{\"image\": \"C:\\Users\\1\\IdeaProjects\\SocialMediaAPI\\src\\test\\resources\\original.jpg\"}".getBytes());
         mvc.perform(multipart(TESTED_URL)
@@ -101,7 +101,7 @@ class ImageControllerIT {
                 .cookie(new Cookie("jwt", jwtCookie))
                 .accept(MediaType.APPLICATION_JSON)
         );
-        Long postId = postRepository.findByAuthor_Id(authUserId).getId();
+        Long postId = postRepository.findByAuthorId(authUserId).getId();
         MockMultipartFile file = new MockMultipartFile("image", "empty.txt", MediaType.IMAGE_JPEG_VALUE, "{\"C:\\Users\\1\\IdeaProjects\\SocialMediaAPI\\src\\test\\resources\\empty.txt\"}".getBytes());
         mvc.perform(multipart(TESTED_URL)
                 .file(file)
@@ -145,14 +145,14 @@ class ImageControllerIT {
                 .cookie(new Cookie("jwt", jwtCookie))
                 .accept(MediaType.APPLICATION_JSON)
         );
-        Long postId = postRepository.findByAuthor_Id(authUserId).getId();
+        Long postId = postRepository.findByAuthorId(authUserId).getId();
         MockMultipartFile file = new MockMultipartFile("image", "original.jpg", MediaType.IMAGE_JPEG_VALUE, "{\"image\": \"C:\\Users\\1\\IdeaProjects\\SocialMediaAPI\\src\\test\\resources\\original.jpg\"}".getBytes());
         mvc.perform(multipart(TESTED_URL)
                 .file(file)
                 .cookie(new Cookie("jwt", jwtCookie))
                 .param("post_id", String.valueOf(postId))
         );
-        Long imageId = postRepository.findById(postId).get().getImages().get(0).getId();
+        Long imageId = postRepository.findById(postId).get().getImages().stream().toList().get(0).getId();
         mvc.perform(delete(TESTED_URL)
                         .param("image_id", String.valueOf(imageId))
                         .param("post_id", String.valueOf(postId))
@@ -170,7 +170,7 @@ class ImageControllerIT {
                 .cookie(new Cookie("jwt", jwtCookie))
                 .accept(MediaType.APPLICATION_JSON)
         );
-        Long postId = postRepository.findByAuthor_Id(authUserId).getId();
+        Long postId = postRepository.findByAuthorId(authUserId).getId();
         mvc.perform(delete(TESTED_URL)
                         .param("post_id", String.valueOf(postId))
                         .param("image_id", String.valueOf(1))
@@ -211,14 +211,14 @@ class ImageControllerIT {
                 .accept(MediaType.APPLICATION_JSON)
         );
         Long authUserId = userRepository.findByUsername(jwtUtils.getUserNameFromJwtToken(jwtCookie)).get().getId();
-        Long postId = postRepository.findByAuthor_Id(authUserId).getId();
+        Long postId = postRepository.findByAuthorId(authUserId).getId();
         MockMultipartFile file = new MockMultipartFile("image", "original.jpg", MediaType.IMAGE_JPEG_VALUE, "{\"image\": \"C:\\Users\\1\\IdeaProjects\\SocialMediaAPI\\src\\test\\resources\\original.jpg\"}".getBytes());
         mvc.perform(multipart(TESTED_URL)
                 .file(file)
                 .cookie(new Cookie("jwt", jwtCookie))
                 .param("post_id", String.valueOf(postId))
         );
-        Long imageId = postRepository.findById(postId).get().getImages().get(0).getId();
+        Long imageId = postRepository.findById(postId).get().getImages().stream().toList().get(0).getId();
         mvc.perform(get(TESTED_URL + "/" + imageId)
                         .cookie(new Cookie("jwt", jwtCookie)))
                 .andExpect(
