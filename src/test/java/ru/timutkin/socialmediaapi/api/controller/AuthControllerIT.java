@@ -1,5 +1,7 @@
 package ru.timutkin.socialmediaapi.api.controller;
 
+
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import ru.timutkin.socialmediaapi.api.constant.ApiConstant;
 import ru.timutkin.socialmediaapi.storage.repository.UserRepository;
 
+import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -30,7 +33,7 @@ class AuthControllerIT {
     private UserRepository userRepository;
 
     @BeforeEach
-    public void clearDb(){
+    public void downUp(){
         userRepository.deleteAll();
     }
 
@@ -68,7 +71,10 @@ class AuthControllerIT {
                         """
                 )
                 .accept(MediaType.APPLICATION_JSON)
-        ).andExpect(status().isBadRequest());
+        ).andExpectAll(
+                status().isBadRequest(),
+                jsonPath("$.errorMessage", startsWith("The user name should not be empty,"))
+        );
     }
 
     @Test
@@ -85,7 +91,10 @@ class AuthControllerIT {
                         """
                 )
                 .accept(MediaType.APPLICATION_JSON)
-        ).andExpect(status().isBadRequest());
+        ).andExpectAll(
+                status().isBadRequest(),
+                jsonPath("$.errorMessage", startsWith("Incorrect email format"))
+        );
     }
 
     @Test
@@ -96,13 +105,16 @@ class AuthControllerIT {
                         """
                         {
                         "username":"user",
-                        "email":"testmail.ru",
+                        "email":"test@mail.ru",
                         "password": "MyPassword123"
                         }
                         """
                 )
                 .accept(MediaType.APPLICATION_JSON)
-        ).andExpect(status().isBadRequest());
+        ).andExpectAll(
+                status().isBadRequest(),
+                jsonPath("$.errorMessage", startsWith("The password is incorrect"))
+        );
     }
 
     @Test
@@ -131,7 +143,10 @@ class AuthControllerIT {
                         """
                 )
                 .accept(MediaType.APPLICATION_JSON)
-        ).andExpect(status().isConflict());
+        ).andExpectAll(
+                status().isConflict(),
+                jsonPath("$.errorMessage", startsWith("Username is already taken!"))
+        );
     }
 
     @Test
@@ -141,7 +156,7 @@ class AuthControllerIT {
                 .content(
                         """
                         {
-                        "username":"user",
+                        "username":"user2",
                         "email":"test@mail.ru",
                         "password": "MyPassword123!"
                         }
@@ -160,7 +175,10 @@ class AuthControllerIT {
                         """
                 )
                 .accept(MediaType.APPLICATION_JSON)
-        ).andExpect(status().isConflict());
+        ).andExpectAll(
+                status().isConflict(),
+                jsonPath("$.errorMessage", startsWith("Email is already in use!"))
+        );
     }
 
     @Test
@@ -188,7 +206,8 @@ class AuthControllerIT {
                         """
                 )
                 .accept(MediaType.APPLICATION_JSON)
-        ).andExpect(status().isOk());
+        ).andExpectAll(
+                status().isOk());
     }
 
     @Test

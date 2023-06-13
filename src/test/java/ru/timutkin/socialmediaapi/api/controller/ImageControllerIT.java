@@ -20,8 +20,9 @@ import ru.timutkin.socialmediaapi.storage.repository.UserRepository;
 
 import java.util.Objects;
 
+import static org.hamcrest.Matchers.startsWith;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -51,6 +52,9 @@ class ImageControllerIT {
 
     @BeforeEach
     void setUp() throws Exception {
+        imageRepository.deleteAll();
+        postRepository.deleteAll();
+        userRepository.deleteAll();
         jwtCookie = Objects.requireNonNull(mvc.perform(post(AuthControllerIT.TESTED_URL + "/signup")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(
@@ -88,13 +92,14 @@ class ImageControllerIT {
                 .file(file)
                 .cookie(new Cookie("jwt", jwtCookie))
                 .param("post_id", String.valueOf(postId))
-        ).andExpect(
-                status().isOk()
+        ).andExpectAll(
+                status().isOk(),
+                content().string("The image was successfully added to the post")
         );
     }
 
     @Test
-    void addImageToPost_FileIsNonValid_ShouldReturn400() throws Exception {
+    void addImageToPost_FileExtensionIsNonValid_ShouldReturn400() throws Exception {
         mvc.perform(post(PostControllerIT.TESTED_URL)
                 .param("header", "test header")
                 .param("text", "test text")
@@ -107,8 +112,9 @@ class ImageControllerIT {
                 .file(file)
                 .cookie(new Cookie("jwt", jwtCookie))
                 .param("post_id", String.valueOf(postId))
-        ).andExpect(
-                status().isBadRequest()
+        ).andExpectAll(
+                status().isBadRequest(),
+                jsonPath("$.errorMessage", startsWith("Incorrect file format (valid format : png, jpg, jpeg)"))
         );
     }
 
@@ -120,8 +126,9 @@ class ImageControllerIT {
                 .file(file)
                 .cookie(new Cookie("jwt", jwtCookie))
                 .param("post_id", String.valueOf(1))
-        ).andExpect(
-                status().isBadRequest()
+        ).andExpectAll(
+                status().isBadRequest(),
+                jsonPath("$.errorMessage", startsWith("Post with id"))
         );
     }
 
@@ -157,8 +164,9 @@ class ImageControllerIT {
                         .param("image_id", String.valueOf(imageId))
                         .param("post_id", String.valueOf(postId))
                         .cookie(new Cookie("jwt", jwtCookie)))
-                .andExpect(
-                        status().isOk()
+                .andExpectAll(
+                        status().isOk(),
+                        content().string("The image was successfully deleted")
                 );
     }
 
@@ -175,8 +183,9 @@ class ImageControllerIT {
                         .param("post_id", String.valueOf(postId))
                         .param("image_id", String.valueOf(1))
                         .cookie(new Cookie("jwt", jwtCookie)))
-                .andExpect(
-                        status().isBadRequest()
+                .andExpectAll(
+                        status().isBadRequest(),
+                        jsonPath("$.errorMessage", startsWith("The image does not match this post"))
                 );
     }
 
@@ -186,8 +195,9 @@ class ImageControllerIT {
                         .param("post_id", String.valueOf(1))
                         .param("image_id", String.valueOf(1))
                         .cookie(new Cookie("jwt", jwtCookie)))
-                .andExpect(
-                        status().isBadRequest()
+                .andExpectAll(
+                        status().isBadRequest(),
+                        jsonPath("$.errorMessage", startsWith("Post with id"))
                 );
     }
 
@@ -230,8 +240,9 @@ class ImageControllerIT {
     void getImageById_ImageIdIsNonValid_ShouldReturn400() throws Exception {
         mvc.perform(get(TESTED_URL + "/" + 1)
                         .cookie(new Cookie("jwt", jwtCookie)))
-                .andExpect(
-                        status().isBadRequest()
+                .andExpectAll(
+                        status().isBadRequest(),
+                        jsonPath("$.errorMessage", startsWith("Image not found"))
                 );
     }
 

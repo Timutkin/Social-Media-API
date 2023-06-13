@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 import ru.timutkin.socialmediaapi.api.constant.ApiConstant;
 import ru.timutkin.socialmediaapi.api.security.JwtUtils;
+import ru.timutkin.socialmediaapi.storage.repository.PostRepository;
 import ru.timutkin.socialmediaapi.storage.repository.UserRepository;
 
 import java.util.Objects;
@@ -27,7 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @Transactional
 @ActiveProfiles("test")
-class ActivityFeedControllerTest {
+class ActivityFeedControllerIT {
 
     public static final String TESTED_URL = ApiConstant.VERSION_API + "/activity";
 
@@ -36,6 +37,9 @@ class ActivityFeedControllerTest {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private PostRepository postRepository;
 
     @Autowired
     private JwtUtils jwtUtils;
@@ -50,6 +54,8 @@ class ActivityFeedControllerTest {
 
     @BeforeEach
     void setUp() throws Exception {
+        userRepository.deleteAll();
+        postRepository.deleteAll();
         jwtCookieMainUser = Objects.requireNonNull(mvc.perform(post(AuthControllerIT.TESTED_URL + "/signup")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(
@@ -98,12 +104,14 @@ class ActivityFeedControllerTest {
                 .cookie(new Cookie("jwt", jwtCookieMainUser))
                 .accept(MediaType.APPLICATION_JSON)
         );
-        mvc.perform(post(FriendshipControllerTest.TESTED_URL + "/add/" + mainUserId)
+        mvc.perform(post(FriendshipControllerIT.TESTED_URL + "/add/" + mainUserId)
                 .cookie(new Cookie("jwt", jwtCookieFriendUser)));
     }
 
     @AfterEach
     void tearDown() {
+        userRepository.deleteAll();
+        postRepository.deleteAll();
     }
 
     @Test

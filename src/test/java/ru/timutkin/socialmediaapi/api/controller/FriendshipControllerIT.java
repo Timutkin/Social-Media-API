@@ -12,7 +12,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 import ru.timutkin.socialmediaapi.api.constant.ApiConstant;
-import ru.timutkin.socialmediaapi.api.mapper.PostMapper;
 import ru.timutkin.socialmediaapi.api.security.JwtUtils;
 import ru.timutkin.socialmediaapi.storage.repository.FriendRequestRepository;
 import ru.timutkin.socialmediaapi.storage.repository.SubscribeRepository;
@@ -20,15 +19,15 @@ import ru.timutkin.socialmediaapi.storage.repository.UserRepository;
 
 import java.util.Objects;
 
+import static org.hamcrest.Matchers.startsWith;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
 @ActiveProfiles("test")
-class FriendshipControllerTest {
+class FriendshipControllerIT {
     public static final String TESTED_URL = ApiConstant.VERSION_API + "/friends";
 
     @Autowired
@@ -43,7 +42,6 @@ class FriendshipControllerTest {
     @Autowired
     private SubscribeRepository subscribeRepository;
 
-
     @Autowired
     private JwtUtils jwtUtils;
 
@@ -57,6 +55,9 @@ class FriendshipControllerTest {
 
     @BeforeEach
     void setUp() throws Exception {
+        subscribeRepository.deleteAll();
+        friendRequestRepository.deleteAll();
+        userRepository.deleteAll();
         jwtCookieMainUser = Objects.requireNonNull(mvc.perform(post(AuthControllerIT.TESTED_URL + "/signup")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(
@@ -97,8 +98,9 @@ class FriendshipControllerTest {
     void sendRequestToFriendship_DataIsValid_ShouldReturn200() throws Exception {
         mvc.perform(post(TESTED_URL + "/add/" + friendUserId)
                         .cookie(new Cookie("jwt", jwtCookieMainUser)))
-                .andExpect(
-                        status().isOk()
+                .andExpectAll(
+                        status().isOk(),
+                        content().string("The friend request has been sent successfully")
                 );
 
     }
@@ -110,8 +112,9 @@ class FriendshipControllerTest {
         );
         mvc.perform(post(TESTED_URL + "/add/" + friendUserId)
                         .cookie(new Cookie("jwt", jwtCookieMainUser)))
-                .andExpect(
-                        status().isConflict()
+                .andExpectAll(
+                        status().isConflict(),
+                        jsonPath("$.errorMessage", startsWith("User friend request to user with id = "))
                 );
     }
 
@@ -119,8 +122,9 @@ class FriendshipControllerTest {
     void sendRequestToFriendship_FriedRequestToHimSelf_ShouldReturn409() throws Exception {
         mvc.perform(post(TESTED_URL + "/add/" + mainUserId)
                         .cookie(new Cookie("jwt", jwtCookieMainUser)))
-                .andExpect(
-                        status().isConflict()
+                .andExpectAll(
+                        status().isConflict(),
+                        jsonPath("$.errorMessage", startsWith("You can't send a friend request to yourself"))
                 );
     }
 
@@ -139,8 +143,9 @@ class FriendshipControllerTest {
         );
         mvc.perform(delete(TESTED_URL + "/remove/" + friendUserId)
                         .cookie(new Cookie("jwt", jwtCookieMainUser))).
-                andExpect(
-                        status().isOk()
+                andExpectAll(
+                        status().isOk(),
+                        content().string("The friend request has been removed successfully")
                 );
     }
 
@@ -148,8 +153,9 @@ class FriendshipControllerTest {
     void removeRequestToFriendship_UserIdIsNonValid_ShouldReturn400() throws Exception {
         mvc.perform(delete(TESTED_URL + "/remove/" + friendUserId)
                         .cookie(new Cookie("jwt", jwtCookieMainUser))).
-                andExpect(
-                        status().isBadRequest()
+                andExpectAll(
+                        status().isBadRequest(),
+                        jsonPath("$.errorMessage", startsWith("User request to user with id = "))
                 );
     }
 
@@ -168,8 +174,9 @@ class FriendshipControllerTest {
         );
         mvc.perform(post(TESTED_URL + "/receive/" + mainUserId)
                         .cookie(new Cookie("jwt", jwtCookieFriendUser)))
-                .andExpect(
-                        status().isOk()
+                .andExpectAll(
+                        status().isOk(),
+                        content().string("The user has been successfully added to friends")
                 );
     }
 
@@ -177,9 +184,10 @@ class FriendshipControllerTest {
     void receiveFriendRequest_UserIdIsNonValid_ShouldReturn400() throws Exception {
         mvc.perform(post(TESTED_URL + "/receive/" + mainUserId)
                         .cookie(new Cookie("jwt", jwtCookieFriendUser)))
-                .andExpect(
-                        status().isBadRequest()
-                );
+                .andExpectAll(
+                        status().isBadRequest(),
+                        jsonPath("$.errorMessage", startsWith("User friend request to user with id = ")
+                ));
     }
 
     @Test
@@ -191,9 +199,10 @@ class FriendshipControllerTest {
                 .cookie(new Cookie("jwt", jwtCookieFriendUser)));
         mvc.perform(post(TESTED_URL + "/receive/" + mainUserId)
                         .cookie(new Cookie("jwt", jwtCookieFriendUser)))
-                .andExpect(
-                        status().isConflict()
-                );
+                .andExpectAll(
+                        status().isConflict(),
+                        jsonPath("$.errorMessage", startsWith("Have you already accepted a friend request")
+                ));
     }
 
     @Test
@@ -212,7 +221,8 @@ class FriendshipControllerTest {
         mvc.perform(post(TESTED_URL + "/reject/" + mainUserId)
                         .cookie(new Cookie("jwt", jwtCookieFriendUser)))
                 .andExpectAll(
-                        status().isOk()
+                        status().isOk(),
+                        content().string("The user has been successfully rejected to friends")
                 );
     }
 
@@ -220,9 +230,10 @@ class FriendshipControllerTest {
     void rejectFriendRequest_UserIdIsNonValid_ShouldReturn400() throws Exception {
         mvc.perform(post(TESTED_URL + "/reject/" + mainUserId)
                         .cookie(new Cookie("jwt", jwtCookieFriendUser)))
-                .andExpect(
-                        status().isBadRequest()
-                );
+                .andExpectAll(
+                        status().isBadRequest(),
+                        jsonPath("$.errorMessage", startsWith("User friend request to user with id = ")
+                ));
     }
 
     @Test

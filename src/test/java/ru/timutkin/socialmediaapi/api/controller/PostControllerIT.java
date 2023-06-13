@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
@@ -24,9 +25,9 @@ import ru.timutkin.socialmediaapi.storage.repository.UserRepository;
 import java.util.List;
 import java.util.Objects;
 
+import static org.hamcrest.Matchers.startsWith;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -62,6 +63,8 @@ class PostControllerIT {
 
     @BeforeEach
     void setUp() throws Exception {
+        userRepository.deleteAll();
+        postRepository.deleteAll();
         jwtCookie = Objects.requireNonNull(mvc.perform(post(AuthControllerIT.TESTED_URL + "/signup")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(
@@ -105,7 +108,10 @@ class PostControllerIT {
                         .cookie(new Cookie("jwt", jwtCookie))
                         .accept(MediaType.APPLICATION_JSON)
                 )
-                .andExpect(status().isBadRequest());
+                .andExpectAll(
+                        status().isBadRequest(),
+                        jsonPath("$.errorMessage", startsWith("The header should not be empty or consist of spaces"))
+                );
     }
 
     @Test
@@ -116,7 +122,10 @@ class PostControllerIT {
                         .cookie(new Cookie("jwt", jwtCookie))
                         .accept(MediaType.APPLICATION_JSON)
                 )
-                .andExpect(status().isBadRequest());
+                .andExpectAll(
+                        status().isBadRequest(),
+                        jsonPath("$.errorMessage", startsWith("The text should not be empty or consist of spaces"))
+                );
     }
 
     @Test
@@ -139,7 +148,10 @@ class PostControllerIT {
                         .cookie(new Cookie("jwt", jwtCookie))
                         .accept(MediaType.APPLICATION_JSON)
                 )
-                .andExpect(status().isBadRequest());
+                .andExpectAll(
+                        status().isBadRequest(),
+                        jsonPath("$.errorMessage", startsWith("Incorrect file format (valid format : png, jpg, jpeg)"))
+                );
     }
 
 
@@ -153,7 +165,7 @@ class PostControllerIT {
                 .header("header2")
                 .text("text2")
                 .build());
-        List<PostDto> postDtos = postRepository.findAll().stream().map(postMapper::postEntityToPostDto).toList();
+        List<PostDto> postDtos = postRepository.findAllFetch(Pageable.unpaged()).stream().map(postMapper::postEntityToPostDto).toList();
         mvc.perform(get(TESTED_URL)
                         .cookie(new Cookie("jwt", jwtCookie))
                 )
@@ -188,7 +200,7 @@ class PostControllerIT {
                 .cookie(new Cookie("jwt", jwtCookie))
                 .accept(MediaType.APPLICATION_JSON)
         );
-        List<PostDto> postDtos = postRepository.findAllByIdFetch(authUserId).stream().map(postMapper::postEntityToPostDto).toList();
+        List<PostDto> postDtos = postRepository.findAllByAuthorId(authUserId).stream().map(postMapper::postEntityToPostDto).toList();
         mvc.perform(get(TESTED_URL + "/my")
                         .cookie(new Cookie("jwt", jwtCookie))
                 )
@@ -231,13 +243,14 @@ class PostControllerIT {
         mvc.perform(delete(TESTED_URL + "/1")
                         .cookie(new Cookie("jwt", jwtCookie))
                 )
-                .andExpect(
-                        status().isBadRequest()
+                .andExpectAll(
+                        status().isBadRequest(),
+                        jsonPath("$.errorMessage", startsWith("Post with id ="))
                 );
     }
 
     @Test
-    void deletePostById_UserIsUnauthorized_ShouldReturn400() throws Exception {
+    void deletePostById_UserIsUnauthorized_ShouldReturn401() throws Exception {
         mvc.perform(delete(TESTED_URL + "/1")
                 )
                 .andExpect(
@@ -284,8 +297,9 @@ class PostControllerIT {
                 .param("post_id", String.valueOf(postId))
                 .cookie(new Cookie("jwt", jwtCookie))
                 .accept(MediaType.APPLICATION_JSON)
-        ).andExpect(
-                status().isBadRequest()
+        ).andExpectAll(
+                status().isBadRequest(),
+                jsonPath("$.errorMessage", startsWith("The header should not be empty or consist of spaces"))
         );
     }
 
@@ -303,8 +317,9 @@ class PostControllerIT {
                 .param("post_id", String.valueOf(postId))
                 .cookie(new Cookie("jwt", jwtCookie))
                 .accept(MediaType.APPLICATION_JSON)
-        ).andExpect(
-                status().isBadRequest()
+        ).andExpectAll(
+                status().isBadRequest(),
+                jsonPath("$.errorMessage", startsWith("The text should not be empty or consist of spaces"))
         );
     }
 
@@ -316,8 +331,9 @@ class PostControllerIT {
                 .param("post_id", String.valueOf(1))
                 .cookie(new Cookie("jwt", jwtCookie))
                 .accept(MediaType.APPLICATION_JSON)
-        ).andExpect(
-                status().isBadRequest()
+        ).andExpectAll(
+                status().isBadRequest(),
+                jsonPath("$.errorMessage", startsWith("Post with id ="))
         );
     }
 
