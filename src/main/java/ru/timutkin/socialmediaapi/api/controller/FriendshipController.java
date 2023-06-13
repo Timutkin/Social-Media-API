@@ -49,8 +49,9 @@ public class FriendshipController {
                     )
             })
     @PostMapping("/add/{userId}")
-    public ResponseEntity<String> sendRequestToFriendship(@PathVariable Long userId,
-                                                          Authentication principal
+    public ResponseEntity<String> sendRequestToFriendship(
+            @PathVariable Long userId,
+            Authentication principal
     ) {
         Validation.validateId(userId);
         UserDetailsImpl userDetails = (UserDetailsImpl) principal.getPrincipal();
@@ -76,8 +77,9 @@ public class FriendshipController {
                     )
             })
     @DeleteMapping("/remove/{userId}")
-    public ResponseEntity<String> removeRequestToFriendship(@PathVariable Long userId,
-                                                            Authentication principal
+    public ResponseEntity<String> removeRequestToFriendship(
+            @PathVariable Long userId,
+            Authentication principal
     ) {
         Validation.validateId(userId);
         UserDetailsImpl userDetails = (UserDetailsImpl) principal.getPrincipal();
@@ -108,9 +110,10 @@ public class FriendshipController {
                     )
             })
     @PostMapping("/receive/{userId}")
-    public ResponseEntity<String> receiveFriendRequest(@PathVariable Long userId,
-                                                       Authentication principal
-                                                       ){
+    public ResponseEntity<String> receiveFriendRequest(
+            @PathVariable Long userId,
+            Authentication principal
+    ) {
         UserDetailsImpl userDetails = (UserDetailsImpl) principal.getPrincipal();
         friendshipService.receiveFriendRequest(userId, userDetails.getId());
         return ResponseEntity.ok()
@@ -118,7 +121,10 @@ public class FriendshipController {
                 .body("The user has been successfully added to friends");
     }
 
-    @Operation(summary = "Rejects a friend request to user with userId",
+    @Operation(summary = "Rejects a friend request to user with userId", description = """
+            If the users have not been friends before, then the user rejects the request
+            If the users were previously friends, then the user is removed from friends
+            """,
             responses = {
                     @ApiResponse(responseCode = "200",
                             description = "The friend request was successfully rejected"
@@ -134,9 +140,10 @@ public class FriendshipController {
                     )
             })
     @PostMapping("/reject/{fromUserId}")
-    public ResponseEntity<String> rejectFriendRequest(@PathVariable Long fromUserId,
-                                                       Authentication principal
-    ){
+    public ResponseEntity<String> rejectFriendRequest(
+            @PathVariable Long fromUserId,
+            Authentication principal
+    ) {
         UserDetailsImpl userDetails = (UserDetailsImpl) principal.getPrincipal();
         friendshipService.rejectFriendRequest(fromUserId, userDetails.getId());
         return ResponseEntity.ok()
@@ -155,7 +162,9 @@ public class FriendshipController {
                     )
             })
     @GetMapping("/requests/from_users")
-    public ResponseEntity<List<FriendFromRequestDto>> getAllFromFriendRequests(Authentication principal) {
+    public ResponseEntity<List<FriendFromRequestDto>> getAllFromFriendRequests(
+            Authentication principal
+    ) {
         UserDetailsImpl userDetails = (UserDetailsImpl) principal.getPrincipal();
         List<FriendFromRequestDto> friendFromRequestDtoList = friendshipService.getAllFromFriendRequests(userDetails.getId());
         return ResponseEntity.ok()
@@ -174,7 +183,9 @@ public class FriendshipController {
                     )
             })
     @GetMapping("/requests/to_users")
-    public ResponseEntity<List<FriendToRequestDto>> getAllToFriendRequests(Authentication principal) {
+    public ResponseEntity<List<FriendToRequestDto>> getAllToFriendRequests(
+            Authentication principal
+    ) {
         UserDetailsImpl userDetails = (UserDetailsImpl) principal.getPrincipal();
         List<FriendToRequestDto> friendFromRequestDtoList = friendshipService.getAllToFriendRequests(userDetails.getId());
         return ResponseEntity.ok()
@@ -193,7 +204,9 @@ public class FriendshipController {
                     )
             })
     @GetMapping
-    public ResponseEntity<List<Long>> getAllFriendsId(Authentication principal) {
+    public ResponseEntity<List<Long>> getAllFriendsId(
+            Authentication principal
+    ) {
         UserDetailsImpl userDetails = (UserDetailsImpl) principal.getPrincipal();
         List<Long> friendRequestDtoList = friendshipService.getAllFriends(userDetails.getId());
         return ResponseEntity.ok()

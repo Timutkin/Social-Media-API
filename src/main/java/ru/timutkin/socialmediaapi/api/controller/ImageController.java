@@ -55,9 +55,10 @@ public class ImageController {
                     )
             })
     @PostMapping
-    public ResponseEntity<String> addImageToPost(@RequestParam(name = "image") MultipartFile file,
-                                                 @RequestParam(name = "post_id") Long postId,
-                                                 Authentication principal
+    public ResponseEntity<String> addImageToPost(
+            @RequestParam(name = "image") MultipartFile file,
+            @RequestParam(name = "post_id") Long postId,
+            Authentication principal
     ) throws IOException {
         PostValidation.validateId(postId);
         ImageValidation.validateFile(file);
@@ -87,9 +88,10 @@ public class ImageController {
                     )
             })
     @DeleteMapping
-    public ResponseEntity<String> deleteImageByPostId(@RequestParam(name = "image_id") Long fileId,
-                                                      @RequestParam(name = "post_id") Long postId,
-                                                      Authentication principal
+    public ResponseEntity<String> deleteImageByPostId(
+            @RequestParam(name = "image_id") Long fileId,
+            @RequestParam(name = "post_id") Long postId,
+            Authentication principal
     ) {
         PostValidation.validateId(postId);
         Validation.validateId(fileId);
@@ -122,7 +124,8 @@ public class ImageController {
                     MediaType.IMAGE_PNG_VALUE,
                     MediaType.IMAGE_JPEG_VALUE
             })
-    public ResponseEntity<byte[]> getImageById(@PathVariable Long imageId
+    public ResponseEntity<byte[]> getImageById(
+            @PathVariable Long imageId
     ) {
         Validation.validateId(imageId);
         byte[] image = imageService.getImageById(imageId);

@@ -1,6 +1,7 @@
 package ru.timutkin.socialmediaapi.api.service.impl;
 
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import org.springframework.transaction.annotation.Transactional;
@@ -52,8 +53,8 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public List<PostDto> findAll() {
-        return postRepository.findAllFetch()
+    public List<PostDto> findAll(Pageable pageable) {
+        return postRepository.findAllFetch(pageable)
                 .stream()
                 .map(postMapper::postEntityToPostDto)
                 .toList();
@@ -84,8 +85,8 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public List<PostDto> findMyPosts(Long userId) {
-        return postRepository.findAllByIdFetch(userId)
+    public List<PostDto> findMyPosts(Long userId, Pageable pageable) {
+        return postRepository.findAllByIdFetch(userId, pageable)
                 .stream()
                 .map(postMapper::postEntityToPostDto)
                 .toList();

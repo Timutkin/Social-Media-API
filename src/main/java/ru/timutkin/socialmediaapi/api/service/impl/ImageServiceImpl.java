@@ -29,7 +29,7 @@ public class ImageServiceImpl implements ImageService {
     @Override
     @Transactional
     public void addImageToPost(MultipartFile file, Long postId, Long userId) throws IOException {
-        PostEntity post = postRepository.findById(postId).orElseThrow(
+        PostEntity post = postRepository.findByIdWithImagesAndAuthor(postId).orElseThrow(
                 () -> new PostNotFoundException(POST_NOT_FOUND.formatted(postId))
         );
         if (!Objects.equals(post.getAuthor().getId(), userId)){
@@ -46,7 +46,7 @@ public class ImageServiceImpl implements ImageService {
     @Override
     @Transactional
     public void deleteImageByPostId(Long fileId, Long postId, Long userId) {
-        PostEntity post = postRepository.findById(postId).orElseThrow(
+        PostEntity post = postRepository.findByIdWithImagesAndAuthor(postId).orElseThrow(
                 () -> new PostNotFoundException(POST_NOT_FOUND.formatted(postId))
         );
         if (!Objects.equals(post.getAuthor().getId(), userId)){
@@ -65,7 +65,7 @@ public class ImageServiceImpl implements ImageService {
     @Transactional
     public byte[] getImageById(Long imageId) {
         ImageOnlyBytes image = imageRepository.getByImageId(imageId).orElseThrow(
-                () ->  new ImageNotFoundException("Image not found exception")
+                () ->  new ImageNotFoundException("Image not found")
         );
         return image.getImage();
     }

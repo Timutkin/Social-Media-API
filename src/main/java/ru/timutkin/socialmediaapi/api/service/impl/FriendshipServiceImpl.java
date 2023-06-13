@@ -16,7 +16,6 @@ import ru.timutkin.socialmediaapi.storage.enumeration.FriendRequestStatus;
 import ru.timutkin.socialmediaapi.storage.repository.FriendRequestRepository;
 import ru.timutkin.socialmediaapi.storage.repository.FriendshipRepository;
 import ru.timutkin.socialmediaapi.storage.repository.SubscribeRepository;
-import ru.timutkin.socialmediaapi.storage.repository.UserRepository;
 
 import java.util.List;
 
@@ -113,7 +112,7 @@ public class FriendshipServiceImpl implements FriendshipService {
             throw new FriendRequestNotFoundException("User friend request to user with id = " + fromUserId + " not found" );
         }
         /*
-        If the users have not been friends before, and the user rejects the request
+        If the users have not been friends before, then the user rejects the request
          */
         friendRequestRepository.setStatusRequestByReceiverIdAndSenderId(toUserId, fromUserId, FriendRequestStatus.REJECTED);
         /*

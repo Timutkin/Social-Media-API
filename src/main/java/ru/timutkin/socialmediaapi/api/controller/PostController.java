@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -54,10 +55,11 @@ public class PostController {
                     )
             })
     @PostMapping()
-    public ResponseEntity<PostDto> createPost(@RequestParam(name = "header") String header,
-                                              @RequestParam(name = "text") String text,
-                                              @RequestParam(name = "images", required = false) MultipartFile[] multipartFiles,
-                                              Authentication principal
+    public ResponseEntity<PostDto> createPost(
+            @RequestParam(name = "header") String header,
+            @RequestParam(name = "text") String text,
+            @RequestParam(name = "images", required = false) MultipartFile[] multipartFiles,
+            Authentication principal
     ) throws IOException {
         PostValidation.validatePostCreation(header, text, multipartFiles);
         UserDetailsImpl userDetails = (UserDetailsImpl) principal.getPrincipal();
@@ -68,6 +70,12 @@ public class PostController {
     }
 
     @Operation(summary = "Gets a all posts of users order by created desc",
+            description = """
+                    page: the index of page that we want to retrieve – the parameter is zero-indexed and its default value is 0
+                    size: the number of pages that we want to retrieve – the default value is 20
+                    sort: one or more properties that we can use for sorting the results, using the following format: 
+                    property1,property2(,asc|desc) – for instance, ?sort=name&sort=email,asc
+                    """,
             responses = {
                     @ApiResponse(responseCode = "200",
                             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
@@ -81,15 +89,23 @@ public class PostController {
                     )
             })
     @GetMapping
-    public ResponseEntity<List<PostDto>> findAll() {
-        List<PostDto> posts = postService.findAll();
+    public ResponseEntity<List<PostDto>> findAll(
+            Pageable pageable
+    ) {
+        List<PostDto> posts = postService.findAll(pageable);
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(posts);
     }
 
 
-    @Operation(summary = "Gets a all posts of user order by created desc",
+    @Operation(summary = "Gets a all posts of auth user order by created desc",
+            description = """
+                    page: the index of page that we want to retrieve – the parameter is zero-indexed and its default value is 0
+                    size: the number of pages that we want to retrieve – the default value is 20
+                    sort: one or more properties that we can use for sorting the results, using the following format: 
+                    property1,property2(,asc|desc) – for instance, ?sort=name&sort=email,asc
+                    """,
             responses = {
                     @ApiResponse(responseCode = "200",
                             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
@@ -103,9 +119,12 @@ public class PostController {
                     )
             })
     @GetMapping("/my")
-    public ResponseEntity<List<PostDto>> findMyPosts(Authentication principal) {
+    public ResponseEntity<List<PostDto>> findMyPosts(
+            Authentication principal,
+            Pageable pageable
+    ) {
         UserDetailsImpl userDetails = (UserDetailsImpl) principal.getPrincipal();
-        List<PostDto> posts = postService.findMyPosts(userDetails.getId());
+        List<PostDto> posts = postService.findMyPosts(userDetails.getId(), pageable);
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(posts);
@@ -122,7 +141,8 @@ public class PostController {
                     @ApiResponse(responseCode = "400",
                             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                                     schema = @Schema(implementation = ErrorResponse.class)),
-                            description = "Validation error: id is less than or equal to zero. Either the post is not found, " +
+                            description = "Validation error: id is less than or equal to zero. " +
+                                          "Either the post is not found, " +
                                           "or it does not belong to an authorized user"
                     ),
                     @ApiResponse(responseCode = "401",
@@ -131,8 +151,9 @@ public class PostController {
                     )
             })
     @DeleteMapping("/{post_id}")
-    public ResponseEntity<Long> deletePostById(@PathVariable Long post_id,
-                                               Authentication principal
+    public ResponseEntity<Long> deletePostById(
+            @PathVariable Long post_id,
+            Authentication principal
     ) {
         PostValidation.validateId(post_id);
         UserDetailsImpl userDetails = (UserDetailsImpl) principal.getPrincipal();
@@ -164,10 +185,11 @@ public class PostController {
                     )
             })
     @PatchMapping()
-    public ResponseEntity<PostDto> updatePost(@RequestParam(name = "post_id") Long postId,
-                                              @RequestParam(name = "header", required = false) String header,
-                                              @RequestParam(name = "text", required = false) String text,
-                                              Authentication principal
+    public ResponseEntity<PostDto> updatePost(
+            @RequestParam(name = "post_id") Long postId,
+            @RequestParam(name = "header", required = false) String header,
+            @RequestParam(name = "text", required = false) String text,
+            Authentication principal
     ) {
         PostValidation.validateHeaderAndTextUpdate(header, text);
         PostValidation.validateId(postId);

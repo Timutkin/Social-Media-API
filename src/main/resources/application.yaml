@@ -11,9 +11,17 @@ spring:
     password: postgres
   jpa:
     show-sql: true
+  data:
+    web:
+      pageable:
+        max-page-size: 100
+
+
 
 server:
   port: 2000
+
+
 
 
 social:

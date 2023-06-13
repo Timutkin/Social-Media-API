@@ -58,7 +58,9 @@ public class AuthController {
                     )
             })
     @PostMapping("/signup")
-    public ResponseEntity<UserDto> registerUser(@RequestBody SignupRequest signupRequest){
+    public ResponseEntity<UserDto> registerUser(
+            @RequestBody SignupRequest signupRequest
+    ) {
         RegistrationValidation.validate(signupRequest);
         UserDto userDto = registrationService.register(signupRequest);
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -82,8 +84,10 @@ public class AuthController {
                     )
             })
     @PostMapping("/signin")
-    public ResponseEntity<String> authenticateUser(@RequestBody LoginRequest loginRequest){
-        return ResponseEntity.status(HttpStatus.OK).header(HttpHeaders.SET_COOKIE,  authService.authUser(loginRequest))
+    public ResponseEntity<String> authenticateUser(
+            @RequestBody LoginRequest loginRequest
+    ) {
+        return ResponseEntity.status(HttpStatus.OK).header(HttpHeaders.SET_COOKIE, authService.authUser(loginRequest))
                 .contentType(MediaType.APPLICATION_JSON)
                 .body("User authorized successfully");
     }

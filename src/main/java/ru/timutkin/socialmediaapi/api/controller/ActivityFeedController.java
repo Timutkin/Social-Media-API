@@ -23,14 +23,19 @@ import java.util.List;
 @AllArgsConstructor
 @RestController
 @RequestMapping(
-
-        value = ApiConstant.VERSION_API+"/activity"
+        value = ApiConstant.VERSION_API + "/activity"
 )
 public class ActivityFeedController {
 
     private final ActivityFeedService activityFeedService;
 
-    @Operation(summary = "Gets all post of user which are subscribed to by an authorized user",
+    @Operation(summary = "Gets all post of user which are subscribed to an authorized user",
+            description = """
+                    page: the index of page that we want to retrieve – the parameter is zero-indexed and its default value is 0
+                    size: the number of pages that we want to retrieve – the default value is 20
+                    sort: one or more properties that we can use for sorting the results, using the following format: 
+                    property1,property2(,asc|desc) – for instance, ?sort=name&sort=email,asc
+                    """,
             responses = {
                     @ApiResponse(responseCode = "200",
                             description = "The all posts was successfully received"
@@ -41,11 +46,12 @@ public class ActivityFeedController {
                     )
             })
     @GetMapping
-    public ResponseEntity<List<PostDto>> getFeedActivity(Pageable pageable,
-                                                         Authentication principal
-                                                   ){
+    public ResponseEntity<List<PostDto>> getFeedActivity(
+            Pageable pageable,
+            Authentication principal
+    ) {
         UserDetailsImpl userDetails = (UserDetailsImpl) principal.getPrincipal();
-        List<PostDto> postDtoList =  activityFeedService.getFeedActivity(pageable, userDetails.getId());
+        List<PostDto> postDtoList = activityFeedService.getFeedActivity(pageable, userDetails.getId());
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(postDtoList);

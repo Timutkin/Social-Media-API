@@ -30,6 +30,7 @@ import ru.timutkin.socialmediaapi.api.validation.Validation;
 public class MessagingController {
 
     private final MessagingService messagingService;
+
     @Operation(summary = "Sends a messaging request to user with userId",
             responses = {
                     @ApiResponse(responseCode = "200",
@@ -51,8 +52,9 @@ public class MessagingController {
                     )
             })
     @PostMapping("/add/{userId}")
-    public ResponseEntity<String> sendRequestToMessaging(@PathVariable Long userId,
-                                                          Authentication principal
+    public ResponseEntity<String> sendRequestToMessaging(
+            @PathVariable Long userId,
+            Authentication principal
     ) {
         Validation.validateId(userId);
         UserDetailsImpl userDetails = (UserDetailsImpl) principal.getPrincipal();
