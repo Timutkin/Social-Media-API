@@ -12,7 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.timutkin.socialmediaapi.api.constant.ApiConstant;
@@ -59,11 +59,10 @@ public class PostController {
             @RequestParam(name = "header") String header,
             @RequestParam(name = "text") String text,
             @RequestParam(name = "images", required = false) MultipartFile[] multipartFiles,
-            Authentication principal
+            @AuthenticationPrincipal UserDetailsImpl user
     ) throws IOException {
         PostValidation.validatePostCreation(header, text, multipartFiles);
-        UserDetailsImpl userDetails = (UserDetailsImpl) principal.getPrincipal();
-        PostDto postDto = postService.savePost(header, text, multipartFiles, userDetails.getId());
+        PostDto postDto = postService.savePost(header, text, multipartFiles, user.getId());
         return ResponseEntity.status(HttpStatus.CREATED)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(postDto);
@@ -120,11 +119,10 @@ public class PostController {
             })
     @GetMapping("/my")
     public ResponseEntity<List<PostDto>> findMyPosts(
-            Authentication principal,
+            @AuthenticationPrincipal UserDetailsImpl user,
             Pageable pageable
     ) {
-        UserDetailsImpl userDetails = (UserDetailsImpl) principal.getPrincipal();
-        List<PostDto> posts = postService.findMyPosts(userDetails.getId(), pageable);
+        List<PostDto> posts = postService.findMyPosts(user.getId(), pageable);
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(posts);
@@ -151,16 +149,13 @@ public class PostController {
                     )
             })
     @DeleteMapping("/{post_id}")
-    public ResponseEntity<Long> deletePostById(
+    @ResponseStatus(HttpStatus.OK)
+    public void deletePostById(
             @PathVariable Long post_id,
-            Authentication principal
+            @AuthenticationPrincipal UserDetailsImpl user
     ) {
         PostValidation.validateId(post_id);
-        UserDetailsImpl userDetails = (UserDetailsImpl) principal.getPrincipal();
-        postService.deleteById(post_id, userDetails.getId());
-        return ResponseEntity.status(HttpStatus.OK)
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(post_id);
+        postService.deleteById(post_id, user.getId());
     }
 
     @Operation(summary = "Updates a post by post_id",
@@ -189,16 +184,14 @@ public class PostController {
             @RequestParam(name = "post_id") Long postId,
             @RequestParam(name = "header", required = false) String header,
             @RequestParam(name = "text", required = false) String text,
-            Authentication principal
+            @AuthenticationPrincipal UserDetailsImpl user
     ) {
         PostValidation.validateHeaderAndTextUpdate(header, text);
         PostValidation.validateId(postId);
-        UserDetailsImpl userDetails = (UserDetailsImpl) principal.getPrincipal();
-        PostDto postDto = postService.updatePost(postId, header, text, userDetails.getId());
+        PostDto postDto = postService.updatePost(postId, header, text, user.getId());
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(postDto);
     }
-
 
 }

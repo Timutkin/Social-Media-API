@@ -10,7 +10,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import ru.timutkin.socialmediaapi.api.constant.ApiConstant;
 import ru.timutkin.socialmediaapi.api.dto.PostDto;
@@ -48,10 +48,9 @@ public class ActivityFeedController {
     @GetMapping
     public ResponseEntity<List<PostDto>> getFeedActivity(
             Pageable pageable,
-            Authentication principal
+            @AuthenticationPrincipal UserDetailsImpl user
     ) {
-        UserDetailsImpl userDetails = (UserDetailsImpl) principal.getPrincipal();
-        List<PostDto> postDtoList = activityFeedService.getFeedActivity(pageable, userDetails.getId());
+        List<PostDto> postDtoList = activityFeedService.getFeedActivity(pageable, user.getId());
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(postDtoList);

@@ -10,7 +10,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import ru.timutkin.socialmediaapi.api.constant.ApiConstant;
 import ru.timutkin.socialmediaapi.api.dto.FriendFromRequestDto;
@@ -49,16 +49,13 @@ public class FriendshipController {
                     )
             })
     @PostMapping("/add/{userId}")
-    public ResponseEntity<String> sendRequestToFriendship(
+    @ResponseStatus(HttpStatus.CREATED)
+    public void sendRequestToFriendship(
             @PathVariable Long userId,
-            Authentication principal
+            @AuthenticationPrincipal UserDetailsImpl user
     ) {
         Validation.validateId(userId);
-        UserDetailsImpl userDetails = (UserDetailsImpl) principal.getPrincipal();
-        friendshipService.sendRequestToFriendShip(userId, userDetails.getId());
-        return ResponseEntity.status(HttpStatus.OK)
-                .contentType(MediaType.APPLICATION_JSON)
-                .body("The friend request has been sent successfully");
+        friendshipService.sendRequestToFriendShip(userId, user.getId());
     }
 
     @Operation(summary = "Removes a friend request to user with userId",
@@ -77,18 +74,14 @@ public class FriendshipController {
                     )
             })
     @DeleteMapping("/remove/{userId}")
-    public ResponseEntity<String> removeRequestToFriendship(
+    @ResponseStatus(HttpStatus.OK)
+    public void removeRequestToFriendship(
             @PathVariable Long userId,
-            Authentication principal
+            @AuthenticationPrincipal UserDetailsImpl user
     ) {
         Validation.validateId(userId);
-        UserDetailsImpl userDetails = (UserDetailsImpl) principal.getPrincipal();
-        friendshipService.removeRequestToFriendShip(userId, userDetails.getId());
-        return ResponseEntity.status(HttpStatus.OK)
-                .contentType(MediaType.APPLICATION_JSON)
-                .body("The friend request has been removed successfully");
+        friendshipService.removeRequestToFriendShip(userId, user.getId());
     }
-
     @Operation(summary = "Receives a friend request to user with userId",
             responses = {
                     @ApiResponse(responseCode = "200",
@@ -97,7 +90,7 @@ public class FriendshipController {
                     @ApiResponse(responseCode = "400",
                             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                                     schema = @Schema(implementation = ErrorResponse.class)),
-                            description = "The application from the specified user was not found "
+                            description = "The application from the specified user was not found or id invalid"
                     ),
                     @ApiResponse(responseCode = "409",
                             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
@@ -110,15 +103,13 @@ public class FriendshipController {
                     )
             })
     @PostMapping("/receive/{userId}")
-    public ResponseEntity<String> receiveFriendRequest(
+    @ResponseStatus(HttpStatus.OK)
+    public void receiveFriendRequest(
             @PathVariable Long userId,
-            Authentication principal
+            @AuthenticationPrincipal UserDetailsImpl user
     ) {
-        UserDetailsImpl userDetails = (UserDetailsImpl) principal.getPrincipal();
-        friendshipService.receiveFriendRequest(userId, userDetails.getId());
-        return ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_JSON)
-                .body("The user has been successfully added to friends");
+        Validation.validateId(userId);
+        friendshipService.receiveFriendRequest(userId, user.getId());
     }
 
     @Operation(summary = "Rejects a friend request to user with userId", description = """
@@ -140,15 +131,12 @@ public class FriendshipController {
                     )
             })
     @PostMapping("/reject/{fromUserId}")
-    public ResponseEntity<String> rejectFriendRequest(
+    @ResponseStatus(HttpStatus.OK)
+    public void rejectFriendRequest(
             @PathVariable Long fromUserId,
-            Authentication principal
+            @AuthenticationPrincipal UserDetailsImpl user
     ) {
-        UserDetailsImpl userDetails = (UserDetailsImpl) principal.getPrincipal();
-        friendshipService.rejectFriendRequest(fromUserId, userDetails.getId());
-        return ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_JSON)
-                .body("The user has been successfully rejected to friends");
+        friendshipService.rejectFriendRequest(fromUserId, user.getId());
     }
 
     @Operation(summary = "Gets all friends requests FROM another users",
@@ -163,10 +151,9 @@ public class FriendshipController {
             })
     @GetMapping("/requests/from_users")
     public ResponseEntity<List<FriendFromRequestDto>> getAllFromFriendRequests(
-            Authentication principal
+            @AuthenticationPrincipal UserDetailsImpl user
     ) {
-        UserDetailsImpl userDetails = (UserDetailsImpl) principal.getPrincipal();
-        List<FriendFromRequestDto> friendFromRequestDtoList = friendshipService.getAllFromFriendRequests(userDetails.getId());
+        List<FriendFromRequestDto> friendFromRequestDtoList = friendshipService.getAllFromFriendRequests(user.getId());
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(friendFromRequestDtoList);
@@ -184,10 +171,9 @@ public class FriendshipController {
             })
     @GetMapping("/requests/to_users")
     public ResponseEntity<List<FriendToRequestDto>> getAllToFriendRequests(
-            Authentication principal
+            @AuthenticationPrincipal UserDetailsImpl user
     ) {
-        UserDetailsImpl userDetails = (UserDetailsImpl) principal.getPrincipal();
-        List<FriendToRequestDto> friendFromRequestDtoList = friendshipService.getAllToFriendRequests(userDetails.getId());
+        List<FriendToRequestDto> friendFromRequestDtoList = friendshipService.getAllToFriendRequests(user.getId());
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(friendFromRequestDtoList);
@@ -205,10 +191,9 @@ public class FriendshipController {
             })
     @GetMapping
     public ResponseEntity<List<Long>> getAllFriendsId(
-            Authentication principal
+            @AuthenticationPrincipal UserDetailsImpl user
     ) {
-        UserDetailsImpl userDetails = (UserDetailsImpl) principal.getPrincipal();
-        List<Long> friendRequestDtoList = friendshipService.getAllFriends(userDetails.getId());
+        List<Long> friendRequestDtoList = friendshipService.getAllFriends(user.getId());
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(friendRequestDtoList);

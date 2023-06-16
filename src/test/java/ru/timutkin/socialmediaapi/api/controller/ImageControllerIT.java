@@ -44,7 +44,7 @@ class ImageControllerIT {
 
     @Autowired
     private JwtUtils jwtUtils;
-    
+
     private String jwtCookie;
     private Long authUserId;
     @Autowired
@@ -52,9 +52,6 @@ class ImageControllerIT {
 
     @BeforeEach
     void setUp() throws Exception {
-        imageRepository.deleteAll();
-        postRepository.deleteAll();
-        userRepository.deleteAll();
         jwtCookie = Objects.requireNonNull(mvc.perform(post(AuthControllerIT.TESTED_URL + "/signup")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(
@@ -92,9 +89,8 @@ class ImageControllerIT {
                 .file(file)
                 .cookie(new Cookie("jwt", jwtCookie))
                 .param("post_id", String.valueOf(postId))
-        ).andExpectAll(
-                status().isOk(),
-                content().string("The image was successfully added to the post")
+        ).andExpect(
+                status().isOk()
         );
     }
 
@@ -164,9 +160,8 @@ class ImageControllerIT {
                         .param("image_id", String.valueOf(imageId))
                         .param("post_id", String.valueOf(postId))
                         .cookie(new Cookie("jwt", jwtCookie)))
-                .andExpectAll(
-                        status().isOk(),
-                        content().string("The image was successfully deleted")
+                .andExpect(
+                        status().isOk()
                 );
     }
 
@@ -203,7 +198,7 @@ class ImageControllerIT {
 
     @Test
     void deleteImageById_UserIsUnauthorized_ShouldReturn401() throws Exception {
-        mvc.perform(delete(TESTED_URL )
+        mvc.perform(delete(TESTED_URL)
                         .param("post_id", String.valueOf(1))
                         .param("image_id", String.valueOf(1))
                 )

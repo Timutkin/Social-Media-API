@@ -10,7 +10,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.timutkin.socialmediaapi.api.constant.ApiConstant;
@@ -55,18 +55,15 @@ public class ImageController {
                     )
             })
     @PostMapping
-    public ResponseEntity<String> addImageToPost(
+    @ResponseStatus(HttpStatus.OK)
+    public void addImageToPost(
             @RequestParam(name = "image") MultipartFile file,
             @RequestParam(name = "post_id") Long postId,
-            Authentication principal
+            @AuthenticationPrincipal UserDetailsImpl user
     ) throws IOException {
         PostValidation.validateId(postId);
         ImageValidation.validateFile(file);
-        UserDetailsImpl userDetails = (UserDetailsImpl) principal.getPrincipal();
-        imageService.addImageToPost(file, postId, userDetails.getId());
-        return ResponseEntity.status(HttpStatus.OK)
-                .contentType(MediaType.APPLICATION_JSON)
-                .body("The image was successfully added to the post");
+        imageService.addImageToPost(file, postId, user.getId());
     }
 
     @Operation(summary = "Deletes an image from a post by image id",
@@ -88,18 +85,15 @@ public class ImageController {
                     )
             })
     @DeleteMapping
-    public ResponseEntity<String> deleteImageByPostId(
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteImageByPostId(
             @RequestParam(name = "image_id") Long fileId,
             @RequestParam(name = "post_id") Long postId,
-            Authentication principal
+            @AuthenticationPrincipal UserDetailsImpl user
     ) {
         PostValidation.validateId(postId);
         Validation.validateId(fileId);
-        UserDetailsImpl userDetails = (UserDetailsImpl) principal.getPrincipal();
-        imageService.deleteImageByPostId(fileId, postId, userDetails.getId());
-        return ResponseEntity.status(HttpStatus.OK)
-                .contentType(MediaType.APPLICATION_JSON)
-                .body("The image was successfully deleted");
+        imageService.deleteImageByPostId(fileId, postId, user.getId());
     }
 
     @Operation(summary = "Gets an image by image id",

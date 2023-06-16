@@ -64,11 +64,14 @@ public class AuthController {
         RegistrationValidation.validate(signupRequest);
         UserDto userDto = registrationService.register(signupRequest);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .header(HttpHeaders.SET_COOKIE, authService.authUser(
-                        LoginRequest.builder()
-                                .username(signupRequest.getUsername())
-                                .password(signupRequest.getPassword())
-                                .build()))
+                .header(HttpHeaders.SET_COOKIE,
+                        authService.authUser(
+                                LoginRequest.builder()
+                                        .username(signupRequest.getUsername())
+                                        .password(signupRequest.getPassword())
+                                        .build()
+                        )
+                )
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(userDto);
     }

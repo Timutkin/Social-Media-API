@@ -55,9 +55,6 @@ class FriendshipControllerIT {
 
     @BeforeEach
     void setUp() throws Exception {
-        subscribeRepository.deleteAll();
-        friendRequestRepository.deleteAll();
-        userRepository.deleteAll();
         jwtCookieMainUser = Objects.requireNonNull(mvc.perform(post(AuthControllerIT.TESTED_URL + "/signup")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(
@@ -98,9 +95,8 @@ class FriendshipControllerIT {
     void sendRequestToFriendship_DataIsValid_ShouldReturn200() throws Exception {
         mvc.perform(post(TESTED_URL + "/add/" + friendUserId)
                         .cookie(new Cookie("jwt", jwtCookieMainUser)))
-                .andExpectAll(
-                        status().isOk(),
-                        content().string("The friend request has been sent successfully")
+                .andExpect(
+                        status().isCreated()
                 );
 
     }
@@ -143,9 +139,8 @@ class FriendshipControllerIT {
         );
         mvc.perform(delete(TESTED_URL + "/remove/" + friendUserId)
                         .cookie(new Cookie("jwt", jwtCookieMainUser))).
-                andExpectAll(
-                        status().isOk(),
-                        content().string("The friend request has been removed successfully")
+                andExpect(
+                        status().isOk()
                 );
     }
 
@@ -175,8 +170,7 @@ class FriendshipControllerIT {
         mvc.perform(post(TESTED_URL + "/receive/" + mainUserId)
                         .cookie(new Cookie("jwt", jwtCookieFriendUser)))
                 .andExpectAll(
-                        status().isOk(),
-                        content().string("The user has been successfully added to friends")
+                        status().isOk()
                 );
     }
 
@@ -220,9 +214,8 @@ class FriendshipControllerIT {
         );
         mvc.perform(post(TESTED_URL + "/reject/" + mainUserId)
                         .cookie(new Cookie("jwt", jwtCookieFriendUser)))
-                .andExpectAll(
-                        status().isOk(),
-                        content().string("The user has been successfully rejected to friends")
+                .andExpect(
+                        status().isOk()
                 );
     }
 

@@ -233,8 +233,7 @@ class PostControllerIT {
                         .cookie(new Cookie("jwt", jwtCookie))
                 )
                 .andExpectAll(
-                        status().isOk(),
-                        content().json(String.valueOf(postId))
+                        status().isOk()
                 );
     }
 
