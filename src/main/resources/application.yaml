@@ -1,14 +1,14 @@
 spring:
   liquibase:
-    url: jdbc:postgresql://localhost:5432/social
+    url: jdbc:postgresql://postgres:5432/social-postgres
     user: postgres
-    password: postgres
+    password: root
     change-log: classpath:/db/changelog/db.changelog-master.xml
     clear-checksums: true
   datasource:
-    url: jdbc:postgresql://localhost:5432/social
+    url: jdbc:postgresql://postgres:5432/social-postgres
     username: postgres
-    password: postgres
+    password: root
   jpa:
     show-sql: true
   data:
@@ -16,13 +16,11 @@ spring:
       pageable:
         max-page-size: 100
 
-
+profiling:
+  enable: false
 
 server:
-  port: 2000
-
-
-
+  port: 8080
 
 social:
   media:
@@ -41,3 +39,12 @@ springdoc:
     enabled: true
     url: /v3/api-docs
 
+
+image:
+  resource:
+    get:
+      url:
+        http://localhost:${server.port}/api/v1/images/
+logging:
+  level:
+    root: info
